@@ -10,6 +10,7 @@ export default defineConfig({
         disciplinas: resolve(__dirname, 'disciplinas.html'),
         novas: resolve(__dirname, 'novas.html'),
         contacto: resolve(__dirname, 'contacto.html'),
+        tenda: resolve(__dirname, 'tenda.html'),
       },
     },
   },

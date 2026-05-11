@@ -33,6 +33,7 @@ export function renderNavigation() {
 
         <a href="/disciplinas.html" class="nav-link font-medium">Disciplinas</a>
         <a href="/novas.html" class="nav-link font-medium">Novas</a>
+        <a href="/tenda.html" class="nav-link font-medium">Tenda</a>
         <a href="/contacto.html" class="nav-link font-medium">Contacto</a>
       </div>
 
@@ -57,6 +58,7 @@ export function renderNavigation() {
       </div>
       <a href="/disciplinas.html" class="text-3xl font-display font-bold hover:text-brand-red transition-colors mobile-nav-link">Disciplinas</a>
       <a href="/novas.html" class="text-3xl font-display font-bold hover:text-brand-red transition-colors mobile-nav-link">Novas</a>
+      <a href="/tenda.html" class="text-3xl font-display font-bold hover:text-brand-red transition-colors mobile-nav-link">Tenda</a>
       <a href="/contacto.html" class="text-3xl font-display font-bold hover:text-brand-red transition-colors mobile-nav-link">Contacto</a>
     </div>
   `
