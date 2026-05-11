@@ -11,7 +11,7 @@ export function renderCorpoTecnico() {
       <div class="flex flex-col md:flex-row gap-12">
         <div class="w-full md:w-72 shrink-0">
           <div class="glass-card p-2 transform -rotate-3 transition-transform hover:rotate-0 duration-500">
-            <img src="/images/sprint.png" class="w-full rounded-xl aspect-[3/4] object-cover shadow-2xl" alt="José Manuel Vázquez Navia" />
+            <img src="/images/sprint.png" loading="lazy" decoding="async" class="w-full rounded-xl aspect-[3/4] object-cover shadow-2xl" alt="José Manuel Vázquez Navia" />
           </div>
           <div class="mt-8 space-y-4">
              <div class="p-4 bg-white/5 rounded-xl border border-white/10">

@@ -44,11 +44,11 @@
 
 @layer components {
   .glass-card {
-    @apply bg-brand-grey/50 backdrop-blur-md border border-white/10 rounded-2xl;
+    @apply bg-brand-grey border border-white/5 rounded-2xl;
   }
   
   .btn-primary {
-    @apply px-6 py-3 bg-brand-red text-white font-bold rounded-full transition-all duration-300 hover:scale-105 active:scale-95 shadow-lg shadow-brand-red/20 hover:shadow-brand-red/40;
+    @apply px-6 py-3 bg-brand-red text-white font-bold rounded-full transition-all duration-300 hover:scale-105 active:scale-95;
   }
 
   .nav-link {

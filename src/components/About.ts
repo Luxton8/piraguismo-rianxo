@@ -8,7 +8,7 @@ export function renderAbout() {
         <div class="relative pb-20 lg:pb-0">
           <div class="absolute -top-10 -left-10 w-64 h-64 bg-brand-red/10 rounded-full blur-[100px]"></div>
           <div class="relative z-10 glass-card p-2 transform -rotate-2 hover:rotate-0 transition-transform duration-500">
-            <img src="/images/marathon.png" class="rounded-xl w-full object-cover aspect-[4/3] shadow-2xl" alt="Club History" />
+            <img src="/images/marathon.png" loading="lazy" decoding="async" class="rounded-xl w-full object-cover aspect-[4/3] shadow-2xl" alt="Club History" />
             
             <div class="absolute -bottom-6 right-2 sm:-right-6 md:-right-12 glass-card p-6 md:p-8 animate-fade-in-up border-brand-red/30 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
               <p class="text-4xl md:text-5xl font-display font-bold text-brand-red mb-1">40+</p>

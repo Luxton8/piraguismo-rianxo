@@ -80,22 +80,22 @@ const shopContainer = document.createElement('div')
 shopContainer.className = 'container mx-auto px-6 transition-all duration-300'
 
 const cartDrawer = document.createElement('div')
-cartDrawer.className = 'fixed top-0 right-0 h-full w-full sm:w-[450px] bg-[#0a0a0a] border-l border-white/5 shadow-2xl transform translate-x-full transition-transform duration-500 z-50 flex flex-col'
+cartDrawer.className = 'fixed top-0 right-0 h-full w-full sm:w-[450px] bg-[#0a0a0a] border-l border-white/5 transform translate-x-full transition-transform duration-500 z-50 flex flex-col'
 
 const quickViewOverlay = document.createElement('div')
-quickViewOverlay.className = 'fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300 p-6'
+quickViewOverlay.className = 'fixed inset-0 bg-black/90 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-6'
 quickViewOverlay.id = 'quick-view-overlay'
 
 // Overlay for cart background
 const overlay = document.createElement('div')
-overlay.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden transition-opacity duration-500 opacity-0'
+overlay.className = 'fixed inset-0 bg-black/80 z-40 hidden transition-opacity duration-500 opacity-0'
 overlay.onclick = toggleCart
 
 // Floating Mobile Cart
 const floatingCart = document.createElement('div')
 floatingCart.className = 'fixed bottom-6 right-6 z-40 hidden lg:hidden transition-all duration-300 translate-y-20 opacity-0'
 floatingCart.innerHTML = `
-  <button onclick="window.toggleCart()" class="w-16 h-16 rounded-full bg-brand-red text-white shadow-[0_0_30px_rgba(220,38,38,0.5)] flex items-center justify-center hover:scale-110 active:scale-95 transition-transform relative">
+  <button onclick="window.toggleCart()" class="w-16 h-16 rounded-full bg-brand-red text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-transform relative">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
     <span id="floating-cart-count" class="absolute -top-1 -right-1 bg-white text-brand-red text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-brand-red">0</span>
   </button>
@@ -141,8 +141,8 @@ function renderShop() {
         </div>
       ` : filteredProducts.map(product => `
         <div class="group cursor-pointer" onclick="window.handleProductClick(${product.id})">
-          <div class="relative aspect-[4/5] bg-gradient-to-b from-brand-grey to-brand-dark rounded-3xl overflow-hidden border border-white/5 mb-6 shadow-xl">
-            <img src="${product.image}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" alt="${product.name}" />
+          <div class="relative aspect-[4/5] bg-brand-grey rounded-3xl overflow-hidden border border-white/5 mb-6">
+            <img src="${product.image}" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" alt="${product.name}" />
             
             ${product.tag ? `
               <div class="absolute top-6 left-6 px-4 py-1.5 bg-brand-red text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg">
@@ -152,7 +152,7 @@ function renderShop() {
             
             <!-- Hover Action -->
             <div class="absolute inset-x-4 bottom-4 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-20">
-               <button class="w-full py-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-brand-red hover:border-brand-red transition-colors">
+               <button class="w-full py-4 rounded-2xl bg-brand-dark border border-white/20 text-white font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-brand-red hover:border-brand-red transition-colors">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                   Engadir - ${product.priceStr}
                </button>
@@ -180,7 +180,7 @@ function renderShop() {
         </div>
         <div class="flex justify-center lg:justify-end">
            <div class="glass-card p-4 rotate-6 hover:rotate-0 transition-transform duration-700">
-              <img src="/images/products/shirt.png" class="w-64 md:w-80 rounded-2xl" alt="Promo" />
+              <img src="/images/products/shirt.png" loading="lazy" decoding="async" class="w-64 md:w-80 rounded-2xl" alt="Promo" />
            </div>
         </div>
       </div>
@@ -217,7 +217,7 @@ function renderCartDrawer() {
         </div>
       ` : cart.map((item, index) => `
         <div class="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors group">
-          <img src="${item.product.image}" class="w-20 h-24 object-cover rounded-xl bg-brand-dark" alt="${item.product.name}" />
+          <img src="${item.product.image}" loading="lazy" decoding="async" class="w-20 h-24 object-cover rounded-xl bg-brand-dark" alt="${item.product.name}" />
           <div class="flex-1 flex flex-col justify-between">
             <div>
               <div class="flex justify-between items-start gap-2">
@@ -246,7 +246,7 @@ function renderCartDrawer() {
           <span class="text-white/50 font-bold uppercase tracking-widest text-sm">Total</span>
           <span class="text-3xl font-display font-bold text-brand-red">${total.toFixed(2)}€</span>
         </div>
-        <button onclick="window.checkout()" class="w-full py-4 rounded-xl bg-brand-red text-white font-bold hover:bg-red-700 transition-all transform hover:scale-[1.02] active:scale-[0.98] uppercase tracking-widest flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(220,38,38,0.2)]">
+        <button onclick="window.checkout()" class="w-full py-4 rounded-xl bg-brand-red text-white font-bold hover:bg-red-700 transition-all transform hover:scale-[1.02] active:scale-[0.98] uppercase tracking-widest flex items-center justify-center gap-2">
           Realizar Pedido
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
         </button>
@@ -265,13 +265,13 @@ function renderQuickView(productId: number) {
   let selectedSize = 'M' // Default
 
   quickViewOverlay.innerHTML = `
-    <div class="glass-card w-full max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl relative" id="quick-view-modal">
-      <button onclick="window.closeQuickView()" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-brand-red transition-colors backdrop-blur-md">
+    <div class="w-full max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col md:flex-row bg-brand-grey border border-white/5 rounded-2xl relative" id="quick-view-modal">
+      <button onclick="window.closeQuickView()" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/80 text-white flex items-center justify-center hover:bg-brand-red transition-colors">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
       </button>
       
       <div class="w-full md:w-1/2 bg-gradient-to-b from-brand-grey to-brand-dark p-8 flex items-center justify-center">
-         <img src="${product.image}" class="w-3/4 object-contain animate-fade-in-up" alt="${product.name}" />
+         <img src="${product.image}" loading="lazy" decoding="async" class="w-3/4 object-contain animate-fade-in-up" alt="${product.name}" />
       </div>
       
       <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
@@ -482,7 +482,7 @@ function updateCartUI() {
 // Enhanced Toast System
 function showToast(message: string) {
   const toast = document.createElement('div')
-  toast.className = 'fixed bottom-6 right-6 bg-white text-brand-dark px-6 py-4 rounded-2xl font-bold shadow-2xl transform translate-y-20 opacity-0 transition-all duration-500 z-[100] flex items-center gap-3'
+  toast.className = 'fixed bottom-6 right-6 bg-white text-brand-dark px-6 py-4 rounded-2xl font-bold transform translate-y-20 opacity-0 transition-all duration-500 z-[100] flex items-center gap-3'
   toast.innerHTML = `
     <div class="w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center shrink-0">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>

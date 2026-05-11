@@ -39,7 +39,7 @@ export function renderSponsors() {
         ${sponsors.map(sponsor => `
           <a href="${sponsor.url}" target="_blank" rel="noopener noreferrer" class="h-16 lg:h-20 flex items-center justify-center group cursor-pointer">
             ${sponsor.logo ? `
-              <img src="${sponsor.logo}" alt="${sponsor.name}" class="h-full object-contain opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500" />
+              <img src="${sponsor.logo}" alt="${sponsor.name}" loading="lazy" decoding="async" class="h-full object-contain opacity-40 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500" />
             ` : `
               <span class="text-3xl font-display font-black text-white/20 group-hover:text-white transition-all duration-500 uppercase italic tracking-tighter">${sponsor.name}</span>
             `}
