@@ -5,9 +5,10 @@ export function renderSponsors() {
   const sponsors = [
     { name: 'Concello de Rianxo', logo: '/negativo%20concello.png' },
     { name: 'Deputación da Coruña', logo: '/negativo%20deputacion.png' },
-    { name: 'Xunta de Galicia', logo: 'https://www.xunta.gal/xunta-theme/images/logo-xunta.png' },
-    { name: 'Abanca', logo: 'https://www.abanca.com/img/logo-abanca.svg' },
-    { name: 'Deporte Galego', logo: 'https://deporte.xunta.gal/sites/default/files/logo_deporte_galego_0.png' }
+    { name: 'Xunta de Galicia', logo: '/negativo%20xunta.png' },
+    { name: 'Federación Galega de Piragüismo', logo: '/negativo%20fgp%20(1).png' },
+    { name: 'Deporte Galego', logo: '/deporte%20galego.png' },
+    { name: 'Abanca', logo: 'https://cdn.worldvectorlogo.com/logos/abanca.svg' }
   ]
 
   section.innerHTML = `
@@ -18,7 +19,7 @@ export function renderSponsors() {
       <div class="flex flex-wrap justify-center items-center gap-12 lg:gap-24 opacity-60 grayscale hover:grayscale-0 transition-all duration-700">
         ${sponsors.map(sponsor => `
           <div class="h-16 lg:h-20 flex items-center justify-center group cursor-pointer">
-            <img src="${sponsor.logo}" alt="${sponsor.name}" class="h-full object-contain transition-transform group-hover:scale-110" />
+            <img src="${sponsor.logo}" alt="${sponsor.name}" class="h-full object-contain transition-transform group-hover:scale-110 invert brightness-0 hover:invert-0 hover:brightness-100 duration-500" onerror="this.classList.remove('invert', 'brightness-0'); this.onerror=null;" />
           </div>
         `).join('')}
       </div>
