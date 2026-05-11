@@ -46,10 +46,10 @@ export function renderNavigation() {
     </div>
 
     <!-- Premium Mobile Menu -->
-    <div id="mobile-menu" class="fixed top-0 right-0 h-full w-full bg-brand-dark z-50 flex flex-col transition-transform duration-500 transform translate-x-full border-l border-white/5">
+    <div id="mobile-menu" class="fixed top-0 right-0 h-[100dvh] w-full bg-brand-dark z-50 flex flex-col transition-transform duration-500 transform translate-x-full border-l border-white/5">
       
       <!-- Mobile Menu Header -->
-      <div class="p-6 flex items-center justify-between border-b border-white/10">
+      <div class="p-6 flex items-center justify-between border-b border-white/10 shrink-0">
         <div class="flex items-center gap-3">
           <img src="/logo.png" alt="Logo" class="w-10 h-10 object-contain" />
           <span class="font-display text-lg font-bold tracking-tight">CLUB PIRAGÜISMO</span>
@@ -60,26 +60,31 @@ export function renderNavigation() {
       </div>
 
       <!-- Mobile Menu Content -->
-      <div class="flex-1 overflow-y-auto p-8 flex flex-col gap-8">
-        <nav class="flex flex-col gap-6">
-          <a href="/" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-colors mobile-nav-link">Inicio</a>
+      <div class="flex-1 overflow-y-auto p-8 flex flex-col gap-8 scrollbar-hide">
+        <nav class="flex flex-col gap-6" id="mobile-nav-links">
+          <a href="/" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Inicio</a>
           
-          <div class="flex flex-col gap-4 py-4 border-y border-white/10">
-            <span class="text-sm font-bold text-brand-red uppercase tracking-widest flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              O Club
-            </span>
-            <div class="pl-6 flex flex-col gap-4 border-l-2 border-white/10 ml-2">
-              <a href="/club.html" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link">Quen Somos</a>
-              <a href="/club.html#club-detalles" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link">Xunta Directiva</a>
-              <a href="/club.html#club-detalles" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link">Corpo Técnico</a>
+          <div class="flex flex-col py-2 border-y border-white/10 transform translate-y-4 opacity-0 mobile-nav-item">
+            <button id="mobile-club-toggle" class="flex items-center justify-between w-full text-left py-4">
+              <span class="text-sm font-bold text-brand-red uppercase tracking-widest flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                O Club
+              </span>
+              <svg id="mobile-club-icon" class="w-5 h-5 text-brand-red transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div id="mobile-club-submenu" class="pl-6 flex flex-col gap-4 border-l-2 border-brand-red/30 ml-2 overflow-hidden max-h-0 transition-all duration-300">
+              <div class="pb-4 pt-2 flex flex-col gap-4">
+                <a href="/club.html" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link block">Quen Somos</a>
+                <a href="/club.html#club-detalles" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link block">Xunta Directiva</a>
+                <a href="/club.html#club-detalles" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link block">Corpo Técnico</a>
+              </div>
             </div>
           </div>
           
-          <a href="/calendario.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-colors mobile-nav-link">Calendario</a>
-          <a href="/novas.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-colors mobile-nav-link">Novas</a>
-          <a href="/tenda.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-colors mobile-nav-link">Tenda</a>
-          <a href="/contacto.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-colors mobile-nav-link">Contacto</a>
+          <a href="/calendario.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Calendario</a>
+          <a href="/novas.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Novas</a>
+          <a href="/tenda.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Tenda</a>
+          <a href="/contacto.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Contacto</a>
         </nav>
       </div>
 
@@ -117,14 +122,47 @@ export function renderNavigation() {
     const mobileNavLinks = document.querySelectorAll('.mobile-nav-link')
 
     const toggleMenu = (open: boolean) => {
+      const items = document.querySelectorAll('.mobile-nav-item')
+      
       if (open) {
         mobileMenu?.classList.remove('translate-x-full')
         document.body.style.overflow = 'hidden'
+        
+        // Staggered animation for links
+        items.forEach((item, index) => {
+          setTimeout(() => {
+            item.classList.remove('translate-y-4', 'opacity-0')
+            item.classList.add('translate-y-0', 'opacity-100')
+          }, 150 + (index * 75))
+        })
       } else {
         mobileMenu?.classList.add('translate-x-full')
         document.body.style.overflow = ''
+        
+        // Reset animations instantly when closing
+        items.forEach(item => {
+          item.classList.add('translate-y-4', 'opacity-0')
+          item.classList.remove('translate-y-0', 'opacity-100')
+        })
       }
     }
+
+    // Accordion logic for 'O Club'
+    const clubToggle = document.getElementById('mobile-club-toggle')
+    const clubSubmenu = document.getElementById('mobile-club-submenu')
+    const clubIcon = document.getElementById('mobile-club-icon')
+    
+    let isSubmenuOpen = false
+    clubToggle?.addEventListener('click', () => {
+      isSubmenuOpen = !isSubmenuOpen
+      if(isSubmenuOpen) {
+        clubSubmenu!.style.maxHeight = clubSubmenu!.scrollHeight + 'px'
+        clubIcon!.classList.add('rotate-180')
+      } else {
+        clubSubmenu!.style.maxHeight = '0px'
+        clubIcon!.classList.remove('rotate-180')
+      }
+    })
 
     mobileMenuBtn?.addEventListener('click', () => toggleMenu(true))
     closeMenuBtn?.addEventListener('click', () => toggleMenu(false))
