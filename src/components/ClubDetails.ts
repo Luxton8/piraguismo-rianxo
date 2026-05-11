@@ -24,10 +24,10 @@ export function renderClubDetails() {
     </div>
 
     <!-- Socios CTA -->
-    <div class="mt-20 relative rounded-3xl overflow-hidden p-12 text-center border border-brand-red/20">
+    <div class="mt-20 relative rounded-3xl overflow-hidden p-8 md:p-12 text-center border border-brand-red/20">
       <div class="absolute inset-0 bg-brand-red/5 z-0"></div>
       <div class="relative z-10 max-w-2xl mx-auto">
-        <h3 class="text-4xl font-display font-bold mb-6 italic uppercase tracking-tighter">Faste <span class="text-brand-red">Socio</span></h3>
+        <h3 class="text-3xl md:text-4xl font-display font-bold mb-6 italic uppercase tracking-tighter">Faste <span class="text-brand-red">Socio</span></h3>
         <p class="text-white/70 mb-8 text-lg">
           Apoia o piragüismo en Rianxo e disfruta de vantaxes exclusivas, acceso ás instalacións e descontos en cursos.
         </p>

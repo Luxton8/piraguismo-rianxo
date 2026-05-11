@@ -7,9 +7,9 @@ export function renderContact() {
     <div class="container mx-auto px-6">
       <div class="glass-card overflow-hidden">
         <div class="grid grid-cols-1 lg:grid-cols-2">
-          <div class="p-12 lg:p-20">
+          <div class="p-8 md:p-12 lg:p-20">
             <h2 class="text-brand-red font-bold tracking-widest uppercase mb-4">Contacto</h2>
-            <h3 class="text-5xl font-display font-bold mb-8">TES ALGUNHA DÚBIDA?</h3>
+            <h3 class="text-4xl md:text-5xl font-display font-bold mb-8">TES ALGUNHA DÚBIDA?</h3>
             <p class="text-white/60 text-lg mb-12">
               Estamos aquí para axudarche. Escríbenos e responderémosche o antes posible.
             </p>
@@ -44,7 +44,7 @@ export function renderContact() {
 
           <div class="relative min-h-[500px] bg-brand-grey/50">
             <!-- Information Panel -->
-            <div class="absolute inset-0 flex flex-col justify-center p-12 text-left">
+            <div class="absolute inset-0 flex flex-col justify-center p-8 md:p-12 text-left">
               <h4 class="text-2xl font-display font-bold mb-8 text-brand-red uppercase tracking-tight">Datos de contacto</h4>
               
               <div class="space-y-8">

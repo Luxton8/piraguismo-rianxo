@@ -19,18 +19,18 @@ export function renderHero() {
         INSCRICIÓNS ABERTAS 2026
       </div>
       
-      <h1 class="text-6xl md:text-8xl lg:text-9xl font-display font-extrabold tracking-tighter mb-8 leading-tight">
+      <h1 class="text-5xl md:text-8xl lg:text-9xl font-display font-extrabold tracking-tighter mb-8 leading-tight">
         PASIÓN POLO <br/>
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-red to-red-400">PIRAGÜISMO</span>
       </h1>
       
-      <p class="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto mb-12 font-medium leading-relaxed animate-fade-in-up">
+      <p class="text-lg md:text-2xl text-white/70 max-w-3xl mx-auto mb-12 font-medium leading-relaxed animate-fade-in-up">
         Descubre o deporte náutico por excelencia en Rianxo. Escola de campións, natureza e competición na Ría de Arousa.
       </p>
 
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up" style="animation-delay: 0.2s">
-        <a href="#club" class="btn-primary text-lg px-8 py-4">Coñece o Club</a>
-        <a href="#contacto" class="group flex items-center gap-2 text-lg font-bold hover:text-brand-red transition-all">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in-up w-full max-w-md mx-auto sm:max-w-none" style="animation-delay: 0.2s">
+        <a href="#club" class="btn-primary text-lg px-8 py-4 w-full sm:w-auto">Coñece o Club</a>
+        <a href="#contacto" class="group flex items-center justify-center gap-2 text-lg font-bold hover:text-brand-red transition-all w-full sm:w-auto py-4">
           Comeza hoxe 
           <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
         </a>

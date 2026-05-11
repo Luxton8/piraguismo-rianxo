@@ -4,13 +4,13 @@ export function renderAbout() {
   section.className = 'relative'
 
   section.innerHTML = `
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
         <div class="relative pb-20 lg:pb-0">
           <div class="absolute -top-10 -left-10 w-64 h-64 bg-brand-red/10 rounded-full blur-[100px]"></div>
           <div class="relative z-10 glass-card p-2 transform -rotate-2 hover:rotate-0 transition-transform duration-500">
             <img src="/images/marathon.png" class="rounded-xl w-full object-cover aspect-[4/3] shadow-2xl" alt="Club History" />
             
-            <div class="absolute -bottom-6 -right-6 md:-right-12 glass-card p-6 md:p-8 animate-fade-in-up border-brand-red/30 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
+            <div class="absolute -bottom-6 right-2 sm:-right-6 md:-right-12 glass-card p-6 md:p-8 animate-fade-in-up border-brand-red/30 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
               <p class="text-4xl md:text-5xl font-display font-bold text-brand-red mb-1">40+</p>
               <p class="text-[10px] md:text-xs font-bold text-white/50 tracking-widest uppercase">Anos de historia</p>
             </div>
@@ -19,7 +19,7 @@ export function renderAbout() {
         
         <div>
           <h2 class="text-brand-red font-bold tracking-widest uppercase mb-4">Quen Somos</h2>
-          <h3 class="text-5xl font-display font-bold mb-8 leading-tight">MÁIS QUE UN CLUB, <br/>UNHA FAMILIA</h3>
+          <h3 class="text-4xl md:text-5xl font-display font-bold mb-8 leading-tight">MÁIS QUE UN CLUB, <br/>UNHA FAMILIA</h3>
           
           <div class="space-y-6 text-white/70 text-lg leading-relaxed">
             <p>

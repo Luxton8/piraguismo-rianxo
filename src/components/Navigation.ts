@@ -5,9 +5,9 @@ export function renderNavigation() {
 
   nav.innerHTML = `
     <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <a href="#" class="flex items-center gap-3">
+      <a href="/" class="flex items-center gap-3">
         <img src="/logo.png" alt="Logo" class="w-10 h-10 object-contain" />
-        <span class="font-display text-xl font-bold tracking-tight hidden sm:block">CP RIANXO</span>
+        <span class="font-display text-xl font-bold tracking-tight hidden sm:block">CLUB PIRAGÜISMO RIANXO</span>
       </a>
       
       <div class="hidden md:flex items-center gap-8">
@@ -31,7 +31,7 @@ export function renderNavigation() {
           </div>
         </div>
 
-        <a href="/disciplinas.html" class="nav-link font-medium">Disciplinas</a>
+        <a href="/calendario.html" class="nav-link font-medium">Calendario</a>
         <a href="/novas.html" class="nav-link font-medium">Novas</a>
         <a href="/tenda.html" class="nav-link font-medium">Tenda</a>
         <a href="/contacto.html" class="nav-link font-medium">Contacto</a>
@@ -39,27 +39,62 @@ export function renderNavigation() {
 
       <div class="flex items-center gap-4">
         <button class="btn-primary py-2 px-5 text-sm">Únete</button>
-        <button class="md:hidden text-white p-2" id="mobile-menu-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        <button class="md:hidden text-white p-3 -mr-3" id="mobile-menu-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
         </button>
       </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="fixed inset-0 bg-brand-dark/95 backdrop-blur-xl z-50 flex flex-col items-center justify-center gap-8 transition-all duration-500 opacity-0 pointer-events-none">
-      <button class="absolute top-6 right-6 text-white" id="close-menu-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
-      </button>
-      <a href="/" class="text-3xl font-display font-bold hover:text-brand-red transition-colors mobile-nav-link">Inicio</a>
-      <div class="flex flex-col items-center gap-4">
-        <span class="text-xs font-bold text-brand-red uppercase tracking-widest">O Club</span>
-        <a href="/club.html" class="text-2xl font-display font-bold hover:text-brand-red transition-colors mobile-nav-link">Quen Somos</a>
-        <a href="/club.html#club-detalles" class="text-2xl font-display font-bold hover:text-brand-red transition-colors mobile-nav-link text-white/50">Xunta Directiva</a>
+    <!-- Premium Mobile Menu -->
+    <div id="mobile-menu" class="fixed top-0 right-0 h-full w-full bg-brand-dark z-50 flex flex-col transition-transform duration-500 transform translate-x-full border-l border-white/5">
+      
+      <!-- Mobile Menu Header -->
+      <div class="p-6 flex items-center justify-between border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <img src="/logo.png" alt="Logo" class="w-10 h-10 object-contain" />
+          <span class="font-display text-lg font-bold tracking-tight">CLUB PIRAGÜISMO</span>
+        </div>
+        <button class="text-white p-3 -mr-3 rounded-full hover:bg-white/10 transition-colors" id="close-menu-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+        </button>
       </div>
-      <a href="/disciplinas.html" class="text-3xl font-display font-bold hover:text-brand-red transition-colors mobile-nav-link">Disciplinas</a>
-      <a href="/novas.html" class="text-3xl font-display font-bold hover:text-brand-red transition-colors mobile-nav-link">Novas</a>
-      <a href="/tenda.html" class="text-3xl font-display font-bold hover:text-brand-red transition-colors mobile-nav-link">Tenda</a>
-      <a href="/contacto.html" class="text-3xl font-display font-bold hover:text-brand-red transition-colors mobile-nav-link">Contacto</a>
+
+      <!-- Mobile Menu Content -->
+      <div class="flex-1 overflow-y-auto p-8 flex flex-col gap-8">
+        <nav class="flex flex-col gap-6">
+          <a href="/" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-colors mobile-nav-link">Inicio</a>
+          
+          <div class="flex flex-col gap-4 py-4 border-y border-white/10">
+            <span class="text-sm font-bold text-brand-red uppercase tracking-widest flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              O Club
+            </span>
+            <div class="pl-6 flex flex-col gap-4 border-l-2 border-white/10 ml-2">
+              <a href="/club.html" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link">Quen Somos</a>
+              <a href="/club.html#club-detalles" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link">Xunta Directiva</a>
+              <a href="/club.html#club-detalles" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link">Corpo Técnico</a>
+            </div>
+          </div>
+          
+          <a href="/calendario.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-colors mobile-nav-link">Calendario</a>
+          <a href="/novas.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-colors mobile-nav-link">Novas</a>
+          <a href="/tenda.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-colors mobile-nav-link">Tenda</a>
+          <a href="/contacto.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-colors mobile-nav-link">Contacto</a>
+        </nav>
+      </div>
+
+      <!-- Mobile Menu Footer -->
+      <div class="p-8 mt-auto border-t border-white/10 bg-black/20">
+        <button class="btn-primary w-full py-4 text-lg mb-6 shadow-[0_0_20px_rgba(220,38,38,0.3)]">Únete á Marea Vermella</button>
+        <div class="flex justify-center gap-6">
+          <a href="https://www.instagram.com/club_piraguismo_rianxo/" target="_blank" class="text-white/50 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/club-de-piragüismo-rianxo" target="_blank" class="text-white/50 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+          </a>
+        </div>
+      </div>
     </div>
   `
 
@@ -83,11 +118,11 @@ export function renderNavigation() {
 
     const toggleMenu = (open: boolean) => {
       if (open) {
-        mobileMenu?.classList.remove('opacity-0', 'pointer-events-none')
-        mobileMenu?.classList.add('opacity-100')
+        mobileMenu?.classList.remove('translate-x-full')
+        document.body.style.overflow = 'hidden'
       } else {
-        mobileMenu?.classList.add('opacity-0', 'pointer-events-none')
-        mobileMenu?.classList.remove('opacity-100')
+        mobileMenu?.classList.add('translate-x-full')
+        document.body.style.overflow = ''
       }
     }
 

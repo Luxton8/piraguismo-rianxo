@@ -7,7 +7,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         club: resolve(__dirname, 'club.html'),
-        disciplinas: resolve(__dirname, 'disciplinas.html'),
+        calendario: resolve(__dirname, 'calendario.html'),
         novas: resolve(__dirname, 'novas.html'),
         contacto: resolve(__dirname, 'contacto.html'),
         tenda: resolve(__dirname, 'tenda.html'),

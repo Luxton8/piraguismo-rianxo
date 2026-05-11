@@ -4,7 +4,7 @@ export function renderCorpoTecnico() {
   section.className = 'animate-fade-in-up'
 
   section.innerHTML = `
-    <h1 class="text-6xl font-display font-bold mb-12 uppercase tracking-tighter">Corpo Técnico</h1>
+    <h1 class="text-4xl md:text-6xl font-display font-bold mb-12 uppercase tracking-tighter">Corpo Técnico</h1>
     
     <div class="glass-card p-10 mb-12">
       <p class="text-brand-red font-bold uppercase tracking-widest text-xs mb-4">Responsable técnico</p>
@@ -16,7 +16,7 @@ export function renderCorpoTecnico() {
           <div class="mt-8 space-y-4">
              <div class="p-4 bg-white/5 rounded-xl border border-white/10">
                 <p class="text-[10px] uppercase tracking-widest text-white/40 mb-1">Contacto Directo</p>
-                <p class="font-bold text-brand-red">tecnico@piraguismorianxo.com</p>
+                <p class="font-bold text-brand-red break-all">tecnico@piraguismorianxo.com</p>
              </div>
           </div>
         </div>

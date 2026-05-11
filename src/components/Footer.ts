@@ -3,10 +3,10 @@ export function renderFooter() {
   footer.className = 'py-12 border-t border-white/10 bg-brand-dark'
   footer.innerHTML = `
     <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-      <div class="flex flex-col md:flex-row items-center gap-8">
+      <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8">
         <div class="flex items-center gap-4">
           <img src="/logo.png" class="w-12 h-12 grayscale opacity-50" alt="Logo" />
-          <div class="text-left">
+          <div class="text-center md:text-left">
             <p class="text-white/30 text-sm font-medium">© 2026 Club Piragüismo Rianxo.</p>
             <p class="text-white/20 text-xs mt-1">Todos os dereitos reservados.</p>
           </div>
@@ -23,7 +23,7 @@ export function renderFooter() {
         </div>
       </div>
 
-      <div class="flex gap-8">
+      <div class="flex flex-wrap justify-center gap-4 md:gap-8 mt-8 md:mt-0">
         <a href="#" class="text-white/30 hover:text-brand-red transition-colors font-bold uppercase text-xs tracking-widest">Aviso Legal</a>
         <a href="#" class="text-white/30 hover:text-brand-red transition-colors font-bold uppercase text-xs tracking-widest">Privacidade</a>
         <a href="#" class="text-white/30 hover:text-brand-red transition-colors font-bold uppercase text-xs tracking-widest">Cookies</a>
