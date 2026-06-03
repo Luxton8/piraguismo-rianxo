@@ -15,26 +15,26 @@ export function renderNavigation() {
         
         <!-- Dropdown O Club -->
         <div class="relative group">
-          <a href="/club.html" class="nav-link font-medium flex items-center gap-1 py-2">
+          <a href="/club" class="nav-link font-medium flex items-center gap-1 py-2">
             O Club
             <svg class="w-4 h-4 group-hover:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
           </a>
           <div class="absolute top-full left-0 w-56 pt-2 opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300">
             <div class="bg-brand-dark border border-white/10 rounded-xl overflow-hidden">
-              <a href="/club.html" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors">Quen Somos</a>
-              <a href="/club.html" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors">Breve Historia</a>
-              <a href="/club.html#club-detalles" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors">Corpo Técnico</a>
-              <a href="/club.html#club-detalles" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors">Xunta Directiva</a>
-              <a href="/club.html#club-detalles" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors">Palmarés</a>
-              <a href="/club.html#club-detalles" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors font-bold text-brand-red hover:text-white">Faste Socio</a>
+              <a href="/club" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors">Quen Somos</a>
+              <a href="/club" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors">Breve Historia</a>
+              <a href="/club#club-detalles" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors">Corpo Técnico</a>
+              <a href="/club#club-detalles" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors">Xunta Directiva</a>
+              <a href="/club#club-detalles" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors">Palmarés</a>
+              <a href="/club#club-detalles" class="block px-6 py-3 text-sm hover:bg-brand-red hover:text-white transition-colors font-bold text-brand-red hover:text-white">Faste Socio</a>
             </div>
           </div>
         </div>
 
-        <a href="/calendario.html" class="nav-link font-medium">Calendario</a>
-        <a href="/novas.html" class="nav-link font-medium">Novas</a>
-        <a href="/tenda.html" class="nav-link font-medium">Tenda</a>
-        <a href="/contacto.html" class="nav-link font-medium">Contacto</a>
+        <a href="/calendario" class="nav-link font-medium">Calendario</a>
+        <a href="/novas" class="nav-link font-medium">Novas</a>
+        <a href="/tenda" class="nav-link font-medium">Tenda</a>
+        <a href="/contacto" class="nav-link font-medium">Contacto</a>
       </div>
 
       <div class="flex items-center gap-4">
@@ -73,17 +73,17 @@ export function renderNavigation() {
             </button>
             <div id="mobile-club-submenu" class="pl-6 flex flex-col gap-4 border-l-2 border-brand-red/30 ml-2 overflow-hidden max-h-0 transition-all duration-300">
               <div class="pb-4 pt-2 flex flex-col gap-4">
-                <a href="/club.html" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link block">Quen Somos</a>
-                <a href="/club.html#club-detalles" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link block">Xunta Directiva</a>
-                <a href="/club.html#club-detalles" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link block">Corpo Técnico</a>
+                <a href="/club" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link block">Quen Somos</a>
+                <a href="/club#club-detalles" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link block">Xunta Directiva</a>
+                <a href="/club#club-detalles" class="text-2xl font-display font-bold text-white/80 hover:text-white hover:translate-x-2 transition-all mobile-nav-link block">Corpo Técnico</a>
               </div>
             </div>
           </div>
           
-          <a href="/calendario.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Calendario</a>
-          <a href="/novas.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Novas</a>
-          <a href="/tenda.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Tenda</a>
-          <a href="/contacto.html" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Contacto</a>
+          <a href="/calendario" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Calendario</a>
+          <a href="/novas" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Novas</a>
+          <a href="/tenda" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Tenda</a>
+          <a href="/contacto" class="text-4xl font-display font-bold text-white hover:text-brand-red transition-all transform translate-y-4 opacity-0 mobile-nav-item mobile-nav-link block">Contacto</a>
         </nav>
       </div>
 

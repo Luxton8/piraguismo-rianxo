@@ -3,14 +3,14 @@ export function renderSidebarNav(activeId: string) {
   aside.className = 'w-full lg:w-80 shrink-0'
 
   const items = [
-    { id: 'quensomos', label: 'Quen Somos', href: '/club.html' },
-    { id: 'historia', label: 'Breve Historia', href: '/club.html#historia' },
-    { id: 'tecnico', label: 'Corpo Técnico', href: '/club.html#tecnico' },
-    { id: 'xunta', label: 'Xunta Directiva', href: '/club.html#xunta' },
-    { id: 'socios', label: 'Socios', href: '/club.html#socios' },
-    { id: 'palmares', label: 'Palmarés', href: '/club.html#palmares' },
-    { id: 'equipos', label: 'Equipos', href: '/club.html#equipos' },
-    { id: 'destacados', label: 'Deportistas Destacados', href: '/club.html#destacados' },
+    { id: 'quensomos', label: 'Quen Somos', href: '/club' },
+    { id: 'historia', label: 'Breve Historia', href: '/club#historia' },
+    { id: 'tecnico', label: 'Corpo Técnico', href: '/club#tecnico' },
+    { id: 'xunta', label: 'Xunta Directiva', href: '/club#xunta' },
+    { id: 'socios', label: 'Socios', href: '/club#socios' },
+    { id: 'palmares', label: 'Palmarés', href: '/club#palmares' },
+    { id: 'equipos', label: 'Equipos', href: '/club#equipos' },
+    { id: 'destacados', label: 'Deportistas Destacados', href: '/club#destacados' },
   ]
 
   aside.innerHTML = `

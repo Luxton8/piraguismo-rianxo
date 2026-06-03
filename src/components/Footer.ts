@@ -27,7 +27,7 @@ export function renderFooter() {
         <a href="#" class="text-white/30 hover:text-brand-red transition-colors font-bold uppercase text-xs tracking-widest">Aviso Legal</a>
         <a href="#" class="text-white/30 hover:text-brand-red transition-colors font-bold uppercase text-xs tracking-widest">Privacidade</a>
         <a href="#" class="text-white/30 hover:text-brand-red transition-colors font-bold uppercase text-xs tracking-widest">Cookies</a>
-        <a href="/admin.html" class="text-white/30 hover:text-brand-red transition-colors font-bold uppercase text-xs tracking-widest border-l border-white/10 pl-4 md:pl-8">Administración</a>
+        <a href="/admin" class="text-white/30 hover:text-brand-red transition-colors font-bold uppercase text-xs tracking-widest border-l border-white/10 pl-4 md:pl-8">Administración</a>
       </div>
     </div>
   `
