@@ -1036,6 +1036,26 @@ function renderEventModalContent(evt?: EventItem) {
     closeModal()
     renderDashboardView()
   })
+
+  const dateInput = document.getElementById('event-date') as HTMLInputElement
+  if (dateInput) {
+    dateInput.addEventListener('input', () => {
+      let value = dateInput.value.replace(/\D/g, '')
+      if (value.length > 8) value = value.substring(0, 8)
+      
+      let formatted = ''
+      if (value.length > 0) {
+        formatted += value.substring(0, 2)
+      }
+      if (value.length > 2) {
+        formatted += '/' + value.substring(2, 4)
+      }
+      if (value.length > 4) {
+        formatted += '/' + value.substring(4, 8)
+      }
+      dateInput.value = formatted
+    })
+  }
 }
 
 // Delete Event
