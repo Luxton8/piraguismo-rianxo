@@ -20,7 +20,7 @@ type EventItem = {
 const defaultEvents: EventItem[] = [
   {
     id: 1,
-    date: '15 Xuñ 2026',
+    date: '15/06/2026',
     title: 'Campionato Galego de Ríos',
     location: 'Río Ulla, Catoira',
     type: 'Maratón',
@@ -28,7 +28,7 @@ const defaultEvents: EventItem[] = [
   },
   {
     id: 2,
-    date: '28 Xul 2026',
+    date: '28/07/2026',
     title: 'Regata Liga Provincial da Coruña',
     location: 'Rianxo',
     type: 'Pista',
@@ -36,7 +36,7 @@ const defaultEvents: EventItem[] = [
   },
   {
     id: 3,
-    date: '12 Ago 2026',
+    date: '12/08/2026',
     title: 'Descenso Internacional do Miño',
     location: 'Tui - Ourense',
     type: 'Descenso',
@@ -44,7 +44,7 @@ const defaultEvents: EventItem[] = [
   },
   {
     id: 4,
-    date: '05 Set 2026',
+    date: '05/09/2026',
     title: 'Campionato de España de Pista',
     location: 'Trasona, Asturias',
     type: 'Pista / Competición',
@@ -65,18 +65,20 @@ function parseAndFormatDate(dateStr: string): { day: string; month: string; year
   if (clean.includes('/')) {
     const slashParts = clean.split('/');
     if (slashParts.length === 3) {
-      let dateObj: Date;
-      if (slashParts[0].length === 4) {
-        dateObj = new Date(parseInt(slashParts[0], 10), parseInt(slashParts[1], 10) - 1, parseInt(slashParts[2], 10));
-      } else {
-        dateObj = new Date(parseInt(slashParts[2], 10), parseInt(slashParts[1], 10) - 1, parseInt(slashParts[0], 10));
-      }
-      if (!isNaN(dateObj.getTime())) {
-        const monthsGl = ['Xan', 'Feb', 'Mar', 'Abr', 'Mai', 'Xuñ', 'Xul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
+      const p0 = slashParts[0].trim();
+      const p1 = slashParts[1].trim();
+      const p2 = slashParts[2].trim();
+      if (p0.length === 4) {
         return {
-          day: dateObj.getDate().toString(),
-          month: monthsGl[dateObj.getMonth()],
-          year: dateObj.getFullYear().toString()
+          day: p2.padStart(2, '0'),
+          month: p1.padStart(2, '0'),
+          year: p0
+        };
+      } else {
+        return {
+          day: p0.padStart(2, '0'),
+          month: p1.padStart(2, '0'),
+          year: p2
         };
       }
     }
@@ -86,19 +88,40 @@ function parseAndFormatDate(dateStr: string): { day: string; month: string; year
   if (clean.includes('-')) {
     const dateObj = new Date(clean);
     if (!isNaN(dateObj.getTime())) {
-      const monthsGl = ['Xan', 'Feb', 'Mar', 'Abr', 'Mai', 'Xuñ', 'Xul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
       return {
-        day: dateObj.getDate().toString(),
-        month: monthsGl[dateObj.getMonth()],
+        day: dateObj.getDate().toString().padStart(2, '0'),
+        month: (dateObj.getMonth() + 1).toString().padStart(2, '0'),
         year: dateObj.getFullYear().toString()
       };
     }
   }
 
-  // Fallback to space-split or original string
+  // Fallback to space-split (e.g. "15 Xuñ 2026")
   const spaceParts = clean.split(/\s+/);
   if (spaceParts.length === 3) {
-    return { day: spaceParts[0], month: spaceParts[1], year: spaceParts[2] };
+    const day = spaceParts[0].padStart(2, '0');
+    let month = spaceParts[1];
+    const year = spaceParts[2];
+    
+    const monthsMap: { [key: string]: string } = {
+      'xan': '01', 'xaneiro': '01', 'enero': '01', 'ene': '01',
+      'feb': '02', 'febreiro': '02', 'febrero': '02',
+      'mar': '03', 'marzo': '03',
+      'abr': '04', 'abril': '04',
+      'mai': '05', 'maio': '05', 'mayo': '05', 'may': '05',
+      'xuñ': '06', 'xuño': '06', 'junio': '06', 'jun': '06',
+      'xul': '07', 'xullo': '07', 'julio': '07', 'jul': '07',
+      'ago': '08', 'agosto': '08',
+      'set': '09', 'setembro': '09', 'septiembre': '09', 'sep': '09',
+      'out': '10', 'outubro': '10', 'octubre': '10', 'oct': '10',
+      'nov': '11', 'novembro': '11', 'noviembre': '11',
+      'dec': '12', 'decembro': '12', 'diciembre': '12', 'dic': '12'
+    };
+    const normMonth = month.toLowerCase().replace(/\./g, '');
+    if (monthsMap[normMonth]) {
+      month = monthsMap[normMonth];
+    }
+    return { day, month, year };
   }
 
   return { day: clean, month: '', year: '' };

@@ -75,18 +75,20 @@ function parseAndFormatDate(dateStr: string): { day: string; month: string; year
   if (clean.includes('/')) {
     const slashParts = clean.split('/');
     if (slashParts.length === 3) {
-      let dateObj: Date;
-      if (slashParts[0].length === 4) {
-        dateObj = new Date(parseInt(slashParts[0], 10), parseInt(slashParts[1], 10) - 1, parseInt(slashParts[2], 10));
-      } else {
-        dateObj = new Date(parseInt(slashParts[2], 10), parseInt(slashParts[1], 10) - 1, parseInt(slashParts[0], 10));
-      }
-      if (!isNaN(dateObj.getTime())) {
-        const monthsGl = ['Xan', 'Feb', 'Mar', 'Abr', 'Mai', 'Xuñ', 'Xul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
+      const p0 = slashParts[0].trim();
+      const p1 = slashParts[1].trim();
+      const p2 = slashParts[2].trim();
+      if (p0.length === 4) {
         return {
-          day: dateObj.getDate().toString(),
-          month: monthsGl[dateObj.getMonth()],
-          year: dateObj.getFullYear().toString()
+          day: p2.padStart(2, '0'),
+          month: p1.padStart(2, '0'),
+          year: p0
+        };
+      } else {
+        return {
+          day: p0.padStart(2, '0'),
+          month: p1.padStart(2, '0'),
+          year: p2
         };
       }
     }
@@ -96,19 +98,40 @@ function parseAndFormatDate(dateStr: string): { day: string; month: string; year
   if (clean.includes('-')) {
     const dateObj = new Date(clean);
     if (!isNaN(dateObj.getTime())) {
-      const monthsGl = ['Xan', 'Feb', 'Mar', 'Abr', 'Mai', 'Xuñ', 'Xul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
       return {
-        day: dateObj.getDate().toString(),
-        month: monthsGl[dateObj.getMonth()],
+        day: dateObj.getDate().toString().padStart(2, '0'),
+        month: (dateObj.getMonth() + 1).toString().padStart(2, '0'),
         year: dateObj.getFullYear().toString()
       };
     }
   }
 
-  // Fallback to space-split or original string
+  // Fallback to space-split (e.g. "15 Xuñ 2026")
   const spaceParts = clean.split(/\s+/);
   if (spaceParts.length === 3) {
-    return { day: spaceParts[0], month: spaceParts[1], year: spaceParts[2] };
+    const day = spaceParts[0].padStart(2, '0');
+    let month = spaceParts[1];
+    const year = spaceParts[2];
+    
+    const monthsMap: { [key: string]: string } = {
+      'xan': '01', 'xaneiro': '01', 'enero': '01', 'ene': '01',
+      'feb': '02', 'febreiro': '02', 'febrero': '02',
+      'mar': '03', 'marzo': '03',
+      'abr': '04', 'abril': '04',
+      'mai': '05', 'maio': '05', 'mayo': '05', 'may': '05',
+      'xuñ': '06', 'xuño': '06', 'junio': '06', 'jun': '06',
+      'xul': '07', 'xullo': '07', 'julio': '07', 'jul': '07',
+      'ago': '08', 'agosto': '08',
+      'set': '09', 'setembro': '09', 'septiembre': '09', 'sep': '09',
+      'out': '10', 'outubro': '10', 'octubre': '10', 'oct': '10',
+      'nov': '11', 'novembro': '11', 'noviembre': '11',
+      'dec': '12', 'decembro': '12', 'diciembre': '12', 'dic': '12'
+    };
+    const normMonth = month.toLowerCase().replace(/\./g, '');
+    if (monthsMap[normMonth]) {
+      month = monthsMap[normMonth];
+    }
+    return { day, month, year };
   }
 
   return { day: clean, month: '', year: '' };
@@ -945,8 +968,8 @@ function renderEventModalContent(evt?: EventItem) {
       
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label class="block text-xs font-bold text-white/40 uppercase mb-2">Data (Ex: "15 Xuñ 2026")</label>
-          <input type="text" id="event-date" required placeholder="DD Mes AAAA" class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${evt?.date || ''}" />
+          <label class="block text-xs font-bold text-white/40 uppercase mb-2">Data (Ex: "15/06/2026")</label>
+          <input type="text" id="event-date" required placeholder="DD/MM/AAAA" class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${evt?.date || ''}" />
         </div>
         <div>
           <label class="block text-xs font-bold text-white/40 uppercase mb-2">Localización</label>
