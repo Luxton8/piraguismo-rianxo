@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "title": "Éxito no Campionato Galego de Pista",
+    "category": "Competición",
+    "description": "O noso equipo logrou 5 medallas de ouro na proba celebrada o pasado fin de semana...",
+    "content": "O pasado fin de semana celebrouse o Campionato Galego de Pista nos encoros habituais. O Club de Piragüismo Rianxo acudiu cunha numerosa delegación de deportistas de todas as categorías. Grazas ao esforzo colectivo e ao gran nivel individual dos nosos piragüistas, logramos traer para Rianxo 5 medallas de ouro, 3 de prata e 2 de bronce. Queremos dar os nosos parabéns a todo o corpo técnico e aos deportistas que o deron todo na auga.",
+    "date": "28/05/2026",
+    "image": ""
+  },
+  {
+    "id": 2,
+    "title": "Aberto o prazo de inscrición na Escola de Piragüismo",
+    "category": "Escola",
+    "description": "Comeza unha nova tempada para nenos e nenas de 8 a 14 anos que queiran iniciarse neste deporte.",
+    "content": "Xa está aberto o prazo de inscrición para os cursos de verán e iniciación na nosa Escola de Piragüismo. Se tes entre 8 e 14 anos e queres desfrutar do mar, facer amigos e practicar deporte nun entorno natural único como a Ría de Arousa, esta é a túa oportunidade. Temos prazas limitadas por grupo para garantir a seguridade de todas e todos. Non o deixes para o final e inscríbete a través do noso formulario de contacto ou visitando as nosas oficinas no Porto de Rianxo.",
+    "date": "15/05/2026",
+    "image": ""
+  },
+  {
+    "id": 3,
+    "title": "Xornada de Limpeza da Ría de Arousa",
+    "category": "Club",
+    "description": "Deportistas e socios uníronse para recoller residuos e concienciar sobre o coidado ambiental.",
+    "content": "Como parte do noso compromiso co medio ambiente, este pasado sábado levamos a cabo a nosa xornada anual de voluntariado ambiental. Máis de 30 voluntarios entre deportistas, socios e directivos do club percorreron as praias e zonas costeiras próximas ao club nos seus kaiaks e a pé para recoller plásticos e outros refugallos. Conseguimos retirar máis de 150 kg de lixo das nosas augas. Moitas grazas a todos os que colaborastes nesta gran iniciativa!",
+    "date": "02/05/2026",
+    "image": ""
+  }
+]

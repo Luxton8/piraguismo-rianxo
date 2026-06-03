@@ -238,7 +238,11 @@ function renderDashboardView() {
           <h1 class="text-4xl md:text-5xl font-display font-bold uppercase tracking-tight italic">Panel de <span class="text-brand-red">Control</span></h1>
           <p class="text-white/40 text-sm mt-1">Xestiona de forma sinxela as novas, produtos, pedidos da tenda, eventos e as mensaxes recibidas.</p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 flex-wrap">
+          <button onclick="window.openGithubConfigModal()" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-brand-red hover:bg-brand-red/10 transition-all text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+            <svg class="w-4 h-4 text-brand-red" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            GitHub
+          </button>
           <button onclick="window.openChangePasswordModal()" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-brand-red hover:bg-brand-red/10 transition-all text-xs font-bold uppercase tracking-widest flex items-center gap-2">
             <svg class="w-4 h-4 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
             Contrasinal
@@ -728,8 +732,13 @@ function renderNovaModalContent(nova?: Nova) {
           </select>
         </div>
         <div>
-          <label class="block text-xs font-bold text-white/40 uppercase mb-2">URL da Imaxe (Opcional)</label>
-          <input type="text" id="nova-image" class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" placeholder="/images/news/example.png" value="${nova?.image || ''}" />
+          <label class="block text-xs font-bold text-white/40 uppercase mb-2">Imaxe da Noticia</label>
+          <div class="flex gap-3 items-center">
+            <input type="file" id="nova-file" accept="image/*" class="hidden" />
+            <button type="button" onclick="document.getElementById('nova-file').click()" class="px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/10 transition-colors shrink-0">Seleccionar foto</button>
+            <span id="nova-file-name" class="text-xs text-white/40 truncate flex-1">Ningunha foto seleccionada</span>
+          </div>
+          <input type="text" id="nova-image" class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all mt-3" placeholder="Ou URL da imaxe" value="${nova?.image || ''}" />
         </div>
       </div>
       <div>
@@ -744,14 +753,46 @@ function renderNovaModalContent(nova?: Nova) {
     </form>
   `
 
+  const fileInput = document.getElementById('nova-file') as HTMLInputElement
+  const fileNameSpan = document.getElementById('nova-file-name')!
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files && fileInput.files[0]) {
+      fileNameSpan.textContent = fileInput.files[0].name
+    } else {
+      fileNameSpan.textContent = 'Ningunha foto seleccionada'
+    }
+  })
+
   const form = document.getElementById('nova-form')!
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault()
+    setSavingState(true)
+
     const title = (document.getElementById('nova-title') as HTMLInputElement).value
     const category = (document.getElementById('nova-category') as HTMLSelectElement).value
-    const image = (document.getElementById('nova-image') as HTMLInputElement).value
+    let image = (document.getElementById('nova-image') as HTMLInputElement).value
     const description = (document.getElementById('nova-description') as HTMLInputElement).value
     const content = (document.getElementById('nova-content') as HTMLTextAreaElement).value
+
+    if (fileInput.files && fileInput.files[0]) {
+      const file = fileInput.files[0]
+      const reader = new FileReader()
+      const uploadPromise = new Promise<string | null>((resolveReader) => {
+        reader.onload = async () => {
+          const base64 = reader.result as string
+          const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`
+          const ghPath = `public/images/news/${filename}`
+          const uploadedUrl = await pushBinaryToGitHub(ghPath, base64, `Upload news image: ${file.name}`)
+          resolveReader(uploadedUrl)
+        }
+        reader.onerror = () => resolveReader(null)
+      })
+      reader.readAsDataURL(file)
+      const resUrl = await uploadPromise
+      if (resUrl) {
+        image = resUrl
+      }
+    }
 
     const novas: Nova[] = JSON.parse(localStorage.getItem('admin_novas') || '[]')
 
@@ -783,17 +824,21 @@ function renderNovaModalContent(nova?: Nova) {
     }
 
     localStorage.setItem('admin_novas', JSON.stringify(novas))
+    await pushToGitHub('public/data/novas.json', JSON.stringify(novas, null, 2), `Update news data`)
+
+    setSavingState(false)
     closeModal()
     renderDashboardView()
   })
 }
 
 // Delete News item
-function deleteNova(id: number) {
+async function deleteNova(id: number) {
   if (confirm('¿Seguro que queres eliminar esta noticia?')) {
     const novas: Nova[] = JSON.parse(localStorage.getItem('admin_novas') || '[]')
     const filtered = novas.filter(n => n.id !== id)
     localStorage.setItem('admin_novas', JSON.stringify(filtered))
+    await pushToGitHub('public/data/novas.json', JSON.stringify(filtered, null, 2), `Delete news item: ${id}`)
     renderDashboardView()
     showToast('Noticia eliminada')
   }
@@ -854,8 +899,13 @@ function renderProductModalContent(prod?: Product) {
           <input type="text" id="prod-tag" class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" placeholder="Novidade, Top Vendas, etc." value="${prod?.tag || ''}" />
         </div>
         <div>
-          <label class="block text-xs font-bold text-white/40 uppercase mb-2">URL da Imaxe</label>
-          <input type="text" id="prod-image" class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" placeholder="/images/products/shirt.png" value="${prod?.image || ''}" />
+          <label class="block text-xs font-bold text-white/40 uppercase mb-2">Imaxe do Produto</label>
+          <div class="flex gap-3 items-center">
+            <input type="file" id="prod-file" accept="image/*" class="hidden" />
+            <button type="button" onclick="document.getElementById('prod-file').click()" class="px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs font-bold hover:bg-white/10 transition-colors shrink-0">Seleccionar foto</button>
+            <span id="prod-file-name" class="text-xs text-white/40 truncate flex-1">Ningunha foto seleccionada</span>
+          </div>
+          <input type="text" id="prod-image" class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all mt-3" placeholder="/images/products/shirt.png" value="${prod?.image || ''}" />
         </div>
       </div>
       
@@ -868,15 +918,47 @@ function renderProductModalContent(prod?: Product) {
     </form>
   `
 
+  const fileInput = document.getElementById('prod-file') as HTMLInputElement
+  const fileNameSpan = document.getElementById('prod-file-name')!
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files && fileInput.files[0]) {
+      fileNameSpan.textContent = fileInput.files[0].name
+    } else {
+      fileNameSpan.textContent = 'Ningunha foto seleccionada'
+    }
+  })
+
   const form = document.getElementById('product-form')!
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault()
+    setSavingState(true)
+
     const name = (document.getElementById('prod-name') as HTMLInputElement).value
     const price = parseFloat((document.getElementById('prod-price') as HTMLInputElement).value)
     const category = (document.getElementById('prod-category') as HTMLSelectElement).value
-    const image = (document.getElementById('prod-image') as HTMLInputElement).value || '/images/products/shirt.png'
+    let image = (document.getElementById('prod-image') as HTMLInputElement).value || '/images/products/shirt.png'
     const tag = (document.getElementById('prod-tag') as HTMLInputElement).value || null
     const hasSizes = (document.getElementById('prod-sizes') as HTMLInputElement).checked
+
+    if (fileInput.files && fileInput.files[0]) {
+      const file = fileInput.files[0]
+      const reader = new FileReader()
+      const uploadPromise = new Promise<string | null>((resolveReader) => {
+        reader.onload = async () => {
+          const base64 = reader.result as string
+          const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`
+          const ghPath = `public/images/products/${filename}`
+          const uploadedUrl = await pushBinaryToGitHub(ghPath, base64, `Upload product image: ${file.name}`)
+          resolveReader(uploadedUrl)
+        }
+        reader.onerror = () => resolveReader(null)
+      })
+      reader.readAsDataURL(file)
+      const resUrl = await uploadPromise
+      if (resUrl) {
+        image = resUrl
+      }
+    }
 
     const priceStr = price.toFixed(2).replace('.', ',') + '€'
     const products: Product[] = JSON.parse(localStorage.getItem('admin_tenda_products') || '[]')
@@ -912,17 +994,21 @@ function renderProductModalContent(prod?: Product) {
     }
 
     localStorage.setItem('admin_tenda_products', JSON.stringify(products))
+    await pushToGitHub('public/data/tenda.json', JSON.stringify(products, null, 2), `Update store products data`)
+
+    setSavingState(false)
     closeModal()
     renderDashboardView()
   })
 }
 
 // Delete Product
-function deleteProduct(id: number) {
+async function deleteProduct(id: number) {
   if (confirm('¿Seguro que queres eliminar este produto?')) {
     const products: Product[] = JSON.parse(localStorage.getItem('admin_tenda_products') || '[]')
     const filtered = products.filter(p => p.id !== id)
     localStorage.setItem('admin_tenda_products', JSON.stringify(filtered))
+    await pushToGitHub('public/data/tenda.json', JSON.stringify(filtered, null, 2), `Delete store product: ${id}`)
     renderDashboardView()
     showToast('Produto eliminado')
   }
@@ -992,8 +1078,10 @@ function renderEventModalContent(evt?: EventItem) {
   `
 
   const form = document.getElementById('event-form')!
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault()
+    setSavingState(true)
+
     const title = (document.getElementById('event-title') as HTMLInputElement).value
     const date = (document.getElementById('event-date') as HTMLInputElement).value
     const location = (document.getElementById('event-location') as HTMLInputElement).value
@@ -1029,6 +1117,9 @@ function renderEventModalContent(evt?: EventItem) {
     }
 
     localStorage.setItem('admin_calendario_events', JSON.stringify(events))
+    await pushToGitHub('public/data/calendario.json', JSON.stringify(events, null, 2), `Update calendar events data`)
+
+    setSavingState(false)
     closeModal()
     renderDashboardView()
   })
@@ -1055,11 +1146,12 @@ function renderEventModalContent(evt?: EventItem) {
 }
 
 // Delete Event
-function deleteEvent(id: number) {
+async function deleteEvent(id: number) {
   if (confirm('¿Seguro que queres eliminar este evento?')) {
     const events: EventItem[] = JSON.parse(localStorage.getItem('admin_calendario_events') || '[]')
     const filtered = events.filter(e => e.id !== id)
     localStorage.setItem('admin_calendario_events', JSON.stringify(filtered))
+    await pushToGitHub('public/data/calendario.json', JSON.stringify(filtered, null, 2), `Delete calendar event: ${id}`)
     renderDashboardView()
     showToast('Evento eliminado')
   }
@@ -1113,6 +1205,168 @@ if (!document.getElementById('admin-styles')) {
     }
   `
   document.head.appendChild(style)
+}
+
+// GitHub API Integrations
+async function pushToGitHub(path: string, content: string, message: string): Promise<boolean> {
+  const token = localStorage.getItem('admin_github_token');
+  const owner = localStorage.getItem('admin_github_owner');
+  const repo = localStorage.getItem('admin_github_repo');
+
+  if (!token || !owner || !repo) {
+    console.warn("GitHub integration is not fully configured.");
+    return false;
+  }
+
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+
+  try {
+    let sha = '';
+    const getRes = await fetch(url, {
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    if (getRes.ok) {
+      const data = await getRes.json();
+      sha = data.sha;
+    }
+
+    const base64Content = btoa(unescape(encodeURIComponent(content)));
+    
+    const putRes = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message,
+        content: base64Content,
+        sha: sha || undefined
+      })
+    });
+
+    return putRes.ok;
+  } catch (err) {
+    console.error("Error pushing to GitHub:", err);
+    return false;
+  }
+}
+
+async function pushBinaryToGitHub(path: string, base64ContentWithHeader: string, message: string): Promise<string | null> {
+  const token = localStorage.getItem('admin_github_token');
+  const owner = localStorage.getItem('admin_github_owner');
+  const repo = localStorage.getItem('admin_github_repo');
+
+  if (!token || !owner || !repo) {
+    return null;
+  }
+
+  const base64Content = base64ContentWithHeader.split(',')[1];
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+
+  try {
+    let sha = '';
+    const getRes = await fetch(url, {
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    if (getRes.ok) {
+      const data = await getRes.json();
+      sha = data.sha;
+    }
+
+    const putRes = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message,
+        content: base64Content,
+        sha: sha || undefined
+      })
+    });
+
+    if (putRes.ok) {
+      return `/${path}`;
+    }
+    return null;
+  } catch (err) {
+    console.error("Error pushing binary to GitHub:", err);
+    return null;
+  }
+}
+
+function setSavingState(isSaving: boolean) {
+  const btn = document.querySelector('#admin-modal-content form button[type="submit"]') as HTMLButtonElement;
+  if (btn) {
+    if (isSaving) {
+      btn.disabled = true;
+      btn.textContent = 'GARDANDO EN GITHUB...';
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'GARDAR CAMBIOS';
+    }
+  }
+}
+
+// Open GitHub Config Modal
+function openGithubConfigModal() {
+  const modalContent = document.getElementById('admin-modal-content')!;
+  const savedToken = localStorage.getItem('admin_github_token') || '';
+  const savedOwner = localStorage.getItem('admin_github_owner') || 'Luxton8';
+  const savedRepo = localStorage.getItem('admin_github_repo') || 'piraguismo-rianxo';
+
+  modalContent.innerHTML = `
+    <button onclick="window.closeModal()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-brand-red transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+    <h3 class="text-2xl font-display font-bold uppercase tracking-tight italic mb-6">
+      Configuración de <span class="text-brand-red">GitHub</span>
+    </h3>
+    <p class="text-white/50 text-xs mb-6">Esta configuración permite que los cambios de las noticias, eventos, productos e imágenes se guarden de forma permanente en tu repositorio público de GitHub.</p>
+    <form id="github-form" class="space-y-6">
+      <div>
+        <label class="block text-xs font-bold text-white/40 uppercase mb-2">Usuario / Organización de GitHub</label>
+        <input type="text" id="gh-owner" required class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${savedOwner}" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-white/40 uppercase mb-2">Nome do Repositorio</label>
+        <input type="text" id="gh-repo" required class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${savedRepo}" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-white/40 uppercase mb-2">Token de Acceso Personal (PAT)</label>
+        <input type="password" id="gh-token" required placeholder="ghp_..." class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${savedToken}" />
+        <a href="https://github.com/settings/tokens/new?scopes=repo&description=Piraguismo%20Rianxo%20CMS" target="_blank" class="text-[10px] text-brand-red hover:underline mt-2 block font-medium">Preme aquí para xerar un token con permisos "repo"</a>
+      </div>
+      <button type="submit" class="btn-primary w-full py-4 text-sm font-bold tracking-widest uppercase">Gardar Configuración</button>
+    </form>
+  `;
+
+  openModal();
+
+  const form = document.getElementById('github-form')!;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const owner = (document.getElementById('gh-owner') as HTMLInputElement).value.trim();
+    const repo = (document.getElementById('gh-repo') as HTMLInputElement).value.trim();
+    const token = (document.getElementById('gh-token') as HTMLInputElement).value.trim();
+
+    localStorage.setItem('admin_github_owner', owner);
+    localStorage.setItem('admin_github_repo', repo);
+    localStorage.setItem('admin_github_token', token);
+
+    showToast('Configuración de GitHub gardada correctamente');
+    closeModal();
+  });
 }
 
 // Open Change Password Modal
@@ -1194,6 +1448,7 @@ declare global {
     deleteProduct: typeof deleteProduct;
     closeModal: typeof closeModal;
     openChangePasswordModal: typeof openChangePasswordModal;
+    openGithubConfigModal: typeof openGithubConfigModal;
     openCreateEventModal: typeof openCreateEventModal;
     openEditEventModal: typeof openEditEventModal;
     deleteEvent: typeof deleteEvent;
@@ -1214,6 +1469,7 @@ window.openEditProductModal = openEditProductModal
 window.deleteProduct = deleteProduct
 window.closeModal = closeModal
 window.openChangePasswordModal = openChangePasswordModal
+window.openGithubConfigModal = openGithubConfigModal
 window.openCreateEventModal = openCreateEventModal
 window.openEditEventModal = openEditEventModal
 window.deleteEvent = deleteEvent

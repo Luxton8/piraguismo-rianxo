@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Camiseta Oficial Club Piragüismo Rianxo",
+    "price": 35.00,
+    "priceStr": "35,00€",
+    "category": "Competición",
+    "image": "/images/products/shirt.png",
+    "tag": "Novidade",
+    "hasSizes": true
+  },
+  {
+    "id": 2,
+    "name": "Sudadeira con Carapucha",
+    "price": 45.00,
+    "priceStr": "45,00€",
+    "category": "Casual",
+    "image": "/images/products/hoodie.png",
+    "tag": "Top Vendas",
+    "hasSizes": true
+  },
+  {
+    "id": 3,
+    "name": "Gorra Técnica",
+    "price": 18.00,
+    "priceStr": "18,00€",
+    "category": "Accesorios",
+    "image": "/images/products/shirt.png",
+    "tag": null,
+    "hasSizes": false
+  },
+  {
+    "id": 4,
+    "name": "Mochila de Equipo",
+    "price": 55.00,
+    "priceStr": "55,00€",
+    "category": "Accesorios",
+    "image": "/images/products/hoodie.png",
+    "tag": "Reserva",
+    "hasSizes": false
+  }
+]

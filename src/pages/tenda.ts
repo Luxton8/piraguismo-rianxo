@@ -63,11 +63,7 @@ const defaultProducts: Product[] = [
   }
 ]
 
-if (!localStorage.getItem('admin_tenda_products')) {
-  localStorage.setItem('admin_tenda_products', JSON.stringify(defaultProducts))
-}
-
-const products: Product[] = JSON.parse(localStorage.getItem('admin_tenda_products')!)
+let products: Product[] = []
 
 let cart: CartItem[] = JSON.parse(localStorage.getItem('shop_cart') || '[]')
 let isCartOpen = false
@@ -689,19 +685,38 @@ checkoutOverlay.addEventListener('click', (e) => {
 
 // --- Initialization ---
 
-// Assemble page
-renderShop()
-renderCartDrawer()
+async function init() {
+  try {
+    const res = await fetch('/data/tenda.json')
+    if (res.ok) {
+      products = await res.json()
+      localStorage.setItem('admin_tenda_products', JSON.stringify(products))
+    } else {
+      throw new Error()
+    }
+  } catch (e) {
+    if (!localStorage.getItem('admin_tenda_products')) {
+      localStorage.setItem('admin_tenda_products', JSON.stringify(defaultProducts))
+    }
+    products = JSON.parse(localStorage.getItem('admin_tenda_products')!)
+  }
 
-main.appendChild(shopContainer)
-main.appendChild(overlay)
-main.appendChild(cartDrawer)
-main.appendChild(quickViewOverlay)
-main.appendChild(checkoutOverlay)
-main.appendChild(floatingCart)
+  // Assemble page
+  renderShop()
+  renderCartDrawer()
 
-app.appendChild(main)
-app.appendChild(renderFooter())
+  main.appendChild(shopContainer)
+  main.appendChild(overlay)
+  main.appendChild(cartDrawer)
+  main.appendChild(quickViewOverlay)
+  main.appendChild(checkoutOverlay)
+  main.appendChild(floatingCart)
 
-// Update UI counts with loaded cart items
-updateCartUI()
+  app.appendChild(main)
+  app.appendChild(renderFooter())
+
+  // Update UI counts with loaded cart items
+  updateCartUI()
+}
+
+init()

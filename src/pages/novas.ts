@@ -42,67 +42,85 @@ const defaultNovas: Nova[] = [
   }
 ]
 
-// Initialize localStorage if empty
-if (!localStorage.getItem('admin_novas')) {
-  localStorage.setItem('admin_novas', JSON.stringify(defaultNovas))
-}
-
-const novas: Nova[] = JSON.parse(localStorage.getItem('admin_novas')!)
+let novas: Nova[] = []
 
 const app = document.querySelector<HTMLDivElement>('#app')!
-
-app.appendChild(renderNavigation())
-
 const main = document.createElement('main')
 main.className = 'pt-32 pb-24 container mx-auto px-6'
 
-main.innerHTML = `
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
-    <div>
-      <h1 class="text-6xl font-display font-bold uppercase tracking-tighter italic">Novas <span class="text-brand-red">do Club</span></h1>
-      <p class="text-white/50 text-lg mt-2">Mantente ao día de todas as novidades, competicións e actividades do Club Piragüismo Rianxo.</p>
-    </div>
-  </div>
-  
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="novas-grid">
-    ${novas.map(nova => `
-      <div class="glass-card overflow-hidden group flex flex-col h-full">
-        <div class="h-64 bg-white/5 overflow-hidden relative shrink-0">
-          ${nova.image ? `
-            <img src="${nova.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="${nova.title}" />
-          ` : `
-            <div class="w-full h-full bg-brand-red/10 flex items-center justify-center text-white/20 italic font-display">Imaxe da nova</div>
-          `}
-          <div class="absolute top-4 left-4 bg-brand-dark/80 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/70">${nova.date}</div>
-        </div>
-        <div class="p-8 flex flex-col flex-1">
-          <span class="text-brand-red font-bold text-xs uppercase tracking-widest mb-4 block">${nova.category}</span>
-          <h3 class="text-2xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors line-clamp-2">${nova.title}</h3>
-          <p class="text-white/50 text-sm mb-6 leading-relaxed flex-1 line-clamp-3">${nova.description}</p>
-          <button onclick="window.showNovaDetails(${nova.id})" class="font-bold text-sm border-b border-brand-red pb-1 self-start hover:text-brand-red transition-colors">Ler máis</button>
-        </div>
+async function init() {
+  try {
+    const res = await fetch('/data/novas.json')
+    if (res.ok) {
+      novas = await res.json()
+      localStorage.setItem('admin_novas', JSON.stringify(novas))
+    } else {
+      throw new Error('Not OK')
+    }
+  } catch (e) {
+    if (!localStorage.getItem('admin_novas')) {
+      localStorage.setItem('admin_novas', JSON.stringify(defaultNovas))
+    }
+    novas = JSON.parse(localStorage.getItem('admin_novas')!)
+  }
+
+  app.appendChild(renderNavigation())
+  renderPage()
+  app.appendChild(main)
+  app.appendChild(renderFooter())
+
+  // Modal logic
+  const modal = document.getElementById('nova-modal')!
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeNovaDetails()
+  })
+}
+
+function renderPage() {
+  main.innerHTML = `
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
+      <div>
+        <h1 class="text-6xl font-display font-bold uppercase tracking-tighter italic">Novas <span class="text-brand-red">do Club</span></h1>
+        <p class="text-white/50 text-lg mt-2">Mantente ao día de todas as novidades, competicións e actividades do Club Piragüismo Rianxo.</p>
       </div>
-    `).join('')}
-  </div>
-
-  <!-- Detail Modal -->
-  <div id="nova-modal" class="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-6">
-    <div class="w-full max-w-3xl bg-brand-grey border border-white/5 rounded-3xl relative max-h-[90vh] overflow-y-auto" id="nova-modal-content">
-      <!-- Content injected by JavaScript -->
     </div>
-  </div>
-`
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="novas-grid">
+      ${novas.map(nova => `
+        <div class="glass-card overflow-hidden group flex flex-col h-full">
+          <div class="h-64 bg-white/5 overflow-hidden relative shrink-0">
+            ${nova.image ? `
+              <img src="${nova.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="${nova.title}" />
+            ` : `
+              <div class="w-full h-full bg-brand-red/10 flex items-center justify-center text-white/20 italic font-display">Imaxe da nova</div>
+            `}
+            <div class="absolute top-4 left-4 bg-brand-dark/80 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/70">${nova.date}</div>
+          </div>
+          <div class="p-8 flex flex-col flex-1">
+            <span class="text-brand-red font-bold text-xs uppercase tracking-widest mb-4 block">${nova.category}</span>
+            <h3 class="text-2xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors line-clamp-2">${nova.title}</h3>
+            <p class="text-white/50 text-sm mb-6 leading-relaxed flex-1 line-clamp-3">${nova.description}</p>
+            <button onclick="window.showNovaDetails(${nova.id})" class="font-bold text-sm border-b border-brand-red pb-1 self-start hover:text-brand-red transition-colors">Ler máis</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
 
-app.appendChild(main)
-app.appendChild(renderFooter())
-
-// Modal logic
-const modal = document.getElementById('nova-modal')!
-const modalContent = document.getElementById('nova-modal-content')!
+    <!-- Detail Modal -->
+    <div id="nova-modal" class="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-6">
+      <div class="w-full max-w-3xl bg-brand-grey border border-white/5 rounded-3xl relative max-h-[90vh] overflow-y-auto" id="nova-modal-content">
+        <!-- Content injected by JavaScript -->
+      </div>
+    </div>
+  `
+}
 
 function showNovaDetails(id: number) {
   const nova = novas.find(n => n.id === id)
   if (!nova) return
+
+  const modal = document.getElementById('nova-modal')!
+  const modalContent = document.getElementById('nova-modal-content')!
 
   modalContent.innerHTML = `
     <button onclick="window.closeNovaDetails()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/80 text-white flex items-center justify-center hover:bg-brand-red transition-colors z-10 border border-white/10">
@@ -136,6 +154,7 @@ function showNovaDetails(id: number) {
 }
 
 function closeNovaDetails() {
+  const modal = document.getElementById('nova-modal')!
   modal.classList.add('opacity-0', 'pointer-events-none')
   document.body.style.overflow = ''
 }
@@ -150,6 +169,4 @@ declare global {
 window.showNovaDetails = showNovaDetails
 window.closeNovaDetails = closeNovaDetails
 
-modal.addEventListener('click', (e) => {
-  if (e.target === modal) closeNovaDetails()
-})
+init()
