@@ -70,6 +70,7 @@ type Order = {
 
 function parseAndFormatDate(dateStr: string): { day: string; month: string; year: string } {
   const clean = dateStr.trim();
+  const monthsGl = ['Xan', 'Feb', 'Mar', 'Abr', 'Mai', 'Xuñ', 'Xul', 'Ago', 'Set', 'Out', 'Nov', 'Dec'];
   
   // Try dd/mm/yyyy
   if (clean.includes('/')) {
@@ -78,19 +79,27 @@ function parseAndFormatDate(dateStr: string): { day: string; month: string; year
       const p0 = slashParts[0].trim();
       const p1 = slashParts[1].trim();
       const p2 = slashParts[2].trim();
+      
+      let dayVal = '';
+      let monthIndex = -1;
+      let yearVal = '';
+      
       if (p0.length === 4) {
-        return {
-          day: p2.padStart(2, '0'),
-          month: p1.padStart(2, '0'),
-          year: p0
-        };
+        dayVal = p2.padStart(2, '0');
+        monthIndex = parseInt(p1, 10) - 1;
+        yearVal = p0;
       } else {
-        return {
-          day: p0.padStart(2, '0'),
-          month: p1.padStart(2, '0'),
-          year: p2
-        };
+        dayVal = p0.padStart(2, '0');
+        monthIndex = parseInt(p1, 10) - 1;
+        yearVal = p2;
       }
+      
+      const monthVal = (monthIndex >= 0 && monthIndex < 12) ? monthsGl[monthIndex] : p1;
+      return {
+        day: dayVal,
+        month: monthVal,
+        year: yearVal
+      };
     }
   }
 
@@ -100,7 +109,7 @@ function parseAndFormatDate(dateStr: string): { day: string; month: string; year
     if (!isNaN(dateObj.getTime())) {
       return {
         day: dateObj.getDate().toString().padStart(2, '0'),
-        month: (dateObj.getMonth() + 1).toString().padStart(2, '0'),
+        month: monthsGl[dateObj.getMonth()],
         year: dateObj.getFullYear().toString()
       };
     }
@@ -113,24 +122,11 @@ function parseAndFormatDate(dateStr: string): { day: string; month: string; year
     let month = spaceParts[1];
     const year = spaceParts[2];
     
-    const monthsMap: { [key: string]: string } = {
-      'xan': '01', 'xaneiro': '01', 'enero': '01', 'ene': '01',
-      'feb': '02', 'febreiro': '02', 'febrero': '02',
-      'mar': '03', 'marzo': '03',
-      'abr': '04', 'abril': '04',
-      'mai': '05', 'maio': '05', 'mayo': '05', 'may': '05',
-      'xuñ': '06', 'xuño': '06', 'junio': '06', 'jun': '06',
-      'xul': '07', 'xullo': '07', 'julio': '07', 'jul': '07',
-      'ago': '08', 'agosto': '08',
-      'set': '09', 'setembro': '09', 'septiembre': '09', 'sep': '09',
-      'out': '10', 'outubro': '10', 'octubre': '10', 'oct': '10',
-      'nov': '11', 'novembro': '11', 'noviembre': '11',
-      'dec': '12', 'decembro': '12', 'diciembre': '12', 'dic': '12'
-    };
-    const normMonth = month.toLowerCase().replace(/\./g, '');
-    if (monthsMap[normMonth]) {
-      month = monthsMap[normMonth];
+    if (month.length > 3) {
+      month = month.substring(0, 3);
     }
+    month = month.charAt(0).toUpperCase() + month.slice(1).toLowerCase();
+    
     return { day, month, year };
   }
 
