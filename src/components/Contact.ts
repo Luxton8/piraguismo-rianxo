@@ -14,29 +14,34 @@ export function renderContact() {
               Estamos aquí para axudarche. Escríbenos e responderémosche o antes posible.
             </p>
 
-            <form class="space-y-6">
+            <form id="contact-form" class="space-y-6">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label class="block text-sm font-bold text-white/40 uppercase mb-2">Nome</label>
-                  <input type="text" class="w-full bg-brand-grey border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-red transition-colors" placeholder="O teu nome" />
+                  <input type="text" id="contact-name" required class="w-full bg-brand-grey border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-red transition-colors" placeholder="O teu nome" />
                 </div>
                 <div>
                   <label class="block text-sm font-bold text-white/40 uppercase mb-2">Email</label>
-                  <input type="email" class="w-full bg-brand-grey border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-red transition-colors" placeholder="ti@email.com" />
+                  <input type="email" id="contact-email" required class="w-full bg-brand-grey border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-red transition-colors" placeholder="ti@email.com" />
                 </div>
               </div>
               <div>
                 <label class="block text-sm font-bold text-white/40 uppercase mb-2">Asunto</label>
-                <select class="w-full bg-brand-grey border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-red transition-colors appearance-none">
-                  <option>Información xeral</option>
-                  <option>Inscricións</option>
-                  <option>Eventos</option>
-                  <option>Outros</option>
-                </select>
+                <div class="relative">
+                  <select id="contact-subject" class="w-full bg-brand-grey border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-red transition-colors appearance-none">
+                    <option>Información xeral</option>
+                    <option>Inscricións</option>
+                    <option>Eventos</option>
+                    <option>Outros</option>
+                  </select>
+                  <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-white/50">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
               </div>
               <div>
                 <label class="block text-sm font-bold text-white/40 uppercase mb-2">Mensaxe</label>
-                <textarea class="w-full bg-brand-grey border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-red transition-colors h-32 resize-none" placeholder="Como podemos axudarche?"></textarea>
+                <textarea id="contact-message" required class="w-full bg-brand-grey border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-red transition-colors h-32 resize-none" placeholder="Como podemos axudarche?"></textarea>
               </div>
               <button type="submit" class="btn-primary w-full py-4 text-lg">Enviar mensaxe</button>
             </form>
@@ -94,6 +99,63 @@ export function renderContact() {
       </div>
     </div>
   `
+
+  setTimeout(() => {
+    const form = section.querySelector<HTMLFormElement>('#contact-form')
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        const nameEl = document.getElementById('contact-name') as HTMLInputElement
+        const emailEl = document.getElementById('contact-email') as HTMLInputElement
+        const subjectEl = document.getElementById('contact-subject') as HTMLSelectElement
+        const messageEl = document.getElementById('contact-message') as HTMLTextAreaElement
+
+        const newMsg = {
+          id: Date.now(),
+          name: nameEl.value,
+          email: emailEl.value,
+          subject: subjectEl.value,
+          message: messageEl.value,
+          date: new Date().toLocaleDateString('gl-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          }),
+          read: false
+        }
+
+        // Get existing messages
+        const msgs = JSON.parse(localStorage.getItem('admin_messages') || '[]')
+        msgs.unshift(newMsg)
+        localStorage.setItem('admin_messages', JSON.stringify(msgs))
+
+        // Reset form
+        form.reset()
+
+        // Show Toast/Notification
+        const toast = document.createElement('div')
+        toast.className = 'fixed bottom-6 right-6 bg-white text-brand-dark px-6 py-4 rounded-2xl font-bold shadow-2xl transform translate-y-20 opacity-0 transition-all duration-500 z-[100] flex items-center gap-3 border border-brand-red/20'
+        toast.innerHTML = `
+          <div class="w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-sm">Mensaxe enviada!</span>
+            <span class="text-xs text-brand-dark/50 font-normal">Grazas por poñerte en contacto con nós.</span>
+          </div>
+        `
+        document.body.appendChild(toast)
+        
+        setTimeout(() => toast.classList.remove('translate-y-20', 'opacity-0'), 10)
+        setTimeout(() => {
+          toast.classList.add('translate-y-20', 'opacity-0')
+          setTimeout(() => toast.remove(), 500)
+        }, 4000)
+      })
+    }
+  }, 0)
 
   return section
 }

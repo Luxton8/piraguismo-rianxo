@@ -11,6 +11,7 @@ export default defineConfig({
         novas: resolve(__dirname, 'novas.html'),
         contacto: resolve(__dirname, 'contacto.html'),
         tenda: resolve(__dirname, 'tenda.html'),
+        admin: resolve(__dirname, 'admin.html'),
       },
     },
   },

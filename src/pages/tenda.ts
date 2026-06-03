@@ -20,7 +20,7 @@ type CartItem = {
   size?: string;
 }
 
-const products: Product[] = [
+const defaultProducts: Product[] = [
   {
     id: 1,
     name: 'Camiseta Oficial Club Piragüismo Rianxo',
@@ -63,7 +63,13 @@ const products: Product[] = [
   }
 ]
 
-let cart: CartItem[] = []
+if (!localStorage.getItem('admin_tenda_products')) {
+  localStorage.setItem('admin_tenda_products', JSON.stringify(defaultProducts))
+}
+
+const products: Product[] = JSON.parse(localStorage.getItem('admin_tenda_products')!)
+
+let cart: CartItem[] = JSON.parse(localStorage.getItem('shop_cart') || '[]')
 let isCartOpen = false
 let activeCategory = 'Todas'
 const categories = ['Todas', 'Competición', 'Casual', 'Accesorios']
@@ -85,6 +91,10 @@ cartDrawer.className = 'fixed top-0 right-0 h-full w-full sm:w-[450px] bg-[#0a0a
 const quickViewOverlay = document.createElement('div')
 quickViewOverlay.className = 'fixed inset-0 bg-black/90 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-6'
 quickViewOverlay.id = 'quick-view-overlay'
+
+const checkoutOverlay = document.createElement('div')
+checkoutOverlay.className = 'fixed inset-0 bg-black/90 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-6'
+checkoutOverlay.id = 'checkout-overlay'
 
 // Overlay for cart background
 const overlay = document.createElement('div')
@@ -117,9 +127,10 @@ function renderShop() {
       </div>
       
       <div class="relative group shrink-0 w-full lg:w-auto flex justify-end">
-        <button id="cart-toggle-btn" class="w-full lg:w-auto px-8 py-4 rounded-full bg-brand-red text-white font-bold tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(220,38,38,0.3)]">
+        <button id="cart-toggle-btn" class="w-full lg:w-auto px-8 py-4 rounded-full bg-brand-red text-white font-bold tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(220,38,38,0.3)]">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-          Carrito (<span id="cart-count">${cart.reduce((sum, item) => sum + item.quantity, 0)}</span>)
+          Carrito
+          <span id="cart-count" class="ml-1 px-2.5 py-0.5 bg-white text-brand-red text-xs font-black rounded-full flex items-center justify-center min-w-[20px] h-[20px] transition-transform duration-300">${cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
         </button>
       </div>
     </div>
@@ -420,27 +431,147 @@ function updateQuantity(index: number, change: number) {
   }
 }
 
+function closeCheckout() {
+  checkoutOverlay.classList.add('opacity-0', 'pointer-events-none')
+}
+
+function renderCheckoutModal() {
+  const total = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
+  checkoutOverlay.innerHTML = `
+    <div class="w-full max-w-lg bg-brand-grey border border-white/10 rounded-2xl relative max-h-[90vh] overflow-y-auto p-8 animate-fade-in-up" id="checkout-modal">
+      <button onclick="window.closeCheckout()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/80 text-white flex items-center justify-center hover:bg-brand-red transition-colors border border-white/10 z-10">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+      <h3 class="text-2xl font-display font-bold uppercase tracking-tight italic mb-6">
+        Finalizar <span class="text-brand-red">Pedido</span>
+      </h3>
+      
+      <div class="mb-6 p-4 bg-brand-dark/50 border border-white/5 rounded-xl">
+        <p class="text-xs font-bold text-white/40 uppercase mb-2">Resumo de Compra</p>
+        <div class="max-h-32 overflow-y-auto space-y-2 pr-2 scrollbar-hide">
+          ${cart.map(item => {
+            const sizeStr = item.size ? ` (${item.size})` : ''
+            return `
+              <div class="flex justify-between text-xs text-white/70">
+                <span>${item.quantity}x ${item.product.name}${sizeStr}</span>
+                <span class="font-bold text-white">${(item.product.price * item.quantity).toFixed(2)}€</span>
+              </div>
+            `
+          }).join('')}
+        </div>
+        <div class="flex justify-between items-center border-t border-white/5 mt-4 pt-3">
+          <span class="text-sm font-bold text-white/80 uppercase">Total:</span>
+          <span class="text-xl font-display font-bold text-brand-red">${total.toFixed(2)}€</span>
+        </div>
+      </div>
+
+      <form id="checkout-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-white/40 uppercase mb-2">Nome Completo</label>
+          <input type="text" id="buyer-name" required class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" placeholder="O teu nome e apelidos" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-white/40 uppercase mb-2">Correo Electrónico</label>
+            <input type="email" id="buyer-email" required class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" placeholder="ti@email.com" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-white/40 uppercase mb-2">Teléfono de Contacto</label>
+            <input type="tel" id="buyer-phone" required class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" placeholder="600 000 000" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-white/40 uppercase mb-2">Observacións / Indicacións de envío (Opcional)</label>
+          <textarea id="buyer-notes" class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all h-20 resize-none" placeholder="Ex: Talla infantil ou indicaciones para entrega..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary w-full py-4 text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2">
+          Confirmar Pedido
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+      </form>
+    </div>
+  `
+
+  setTimeout(() => {
+    const form = document.getElementById('checkout-form') as HTMLFormElement
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault()
+      const name = (document.getElementById('buyer-name') as HTMLInputElement).value
+      const emailVal = (document.getElementById('buyer-email') as HTMLInputElement).value
+      const phone = (document.getElementById('buyer-phone') as HTMLInputElement).value
+      const notes = (document.getElementById('buyer-notes') as HTMLTextAreaElement).value
+
+      const orderItems = cart.map(item => ({
+        id: item.product.id,
+        name: item.product.name,
+        price: item.product.price,
+        priceStr: item.product.priceStr,
+        category: item.product.category,
+        image: item.product.image,
+        quantity: item.quantity,
+        size: item.size || null
+      }))
+
+      const newOrder = {
+        id: Date.now(),
+        customer: { name, email: emailVal, phone, notes },
+        items: orderItems,
+        total,
+        status: 'Pendente',
+        date: new Date().toLocaleDateString('gl-ES', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      }
+
+      // Save order
+      const orders = JSON.parse(localStorage.getItem('admin_orders') || '[]')
+      orders.unshift(newOrder)
+      localStorage.setItem('admin_orders', JSON.stringify(orders))
+
+      // Trigger standard email mailto
+      const email = "pedidos@clubpiraguismorianxo.com"
+      const subject = encodeURIComponent(`Novo Pedido #${newOrder.id} - Tenda Oficial`)
+      
+      let bodyText = `Ola,\n\nCliente: ${name}\nEmail: ${emailVal}\nTeléfono: ${phone}\n`
+      if (notes) bodyText += `Observacións: ${notes}\n`
+      bodyText += `\nDetalle do pedido:\n`
+      
+      cart.forEach(item => {
+        const itemTotal = item.product.price * item.quantity
+        const sizeStr = item.size ? ` (Talla: ${item.size})` : ''
+        bodyText += `- ${item.quantity}x ${item.product.name}${sizeStr} a ${item.product.price.toFixed(2)}€/u = ${itemTotal.toFixed(2)}€\n`
+      })
+    
+      bodyText += `\nTotal Pedido: ${total.toFixed(2)}€\n\nGrazas.`
+      
+      const body = encodeURIComponent(bodyText)
+      
+      // Clear cart
+      cart = []
+      updateCartUI()
+      closeCheckout()
+      showToast('Pedido rexistrado con éxito. Abrindo correo...')
+      
+      setTimeout(() => {
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+      }, 1000)
+    })
+  }, 0)
+}
+
 function checkout() {
-  const email = "pedidos@clubpiraguismorianxo.com"
-  const subject = encodeURIComponent("Novo Pedido - Tenda Oficial")
-  
-  let bodyText = "Ola,\n\nGostaría de realizar o seguinte pedido:\n\n"
-  let total = 0
-
-  cart.forEach(item => {
-    const itemTotal = item.product.price * item.quantity
-    total += itemTotal
-    const sizeStr = item.size ? ` (Talla: ${item.size})` : ''
-    bodyText += `- ${item.quantity}x ${item.product.name}${sizeStr} a ${item.product.price.toFixed(2)}€/u = ${itemTotal.toFixed(2)}€\n`
-  })
-
-  bodyText += `\nTotal Pedido: ${total.toFixed(2)}€\n\nPor favor, indicádeme como proceder co pago.\nGrazas.`
-  
-  const body = encodeURIComponent(bodyText)
-  window.location.href = `mailto:${email}?subject=${subject}&body=${body}`
+  if (cart.length === 0) return
+  toggleCart() // Close cart drawer
+  renderCheckoutModal()
+  checkoutOverlay.classList.remove('opacity-0', 'pointer-events-none')
 }
 
 function updateCartUI() {
+  localStorage.setItem('shop_cart', JSON.stringify(cart))
   renderCartDrawer()
   
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0)
@@ -533,6 +664,7 @@ declare global {
     setCategory: typeof setCategory;
     handleProductClick: typeof handleProductClick;
     closeQuickView: typeof closeQuickView;
+    closeCheckout: typeof closeCheckout;
     currentSelectedSize: string;
   }
 }
@@ -545,10 +677,14 @@ window.checkout = checkout
 window.setCategory = setCategory
 window.handleProductClick = handleProductClick
 window.closeQuickView = closeQuickView
+window.closeCheckout = closeCheckout
 
 // Close modal on outside click
 quickViewOverlay.addEventListener('click', (e) => {
   if (e.target === quickViewOverlay) closeQuickView()
+})
+checkoutOverlay.addEventListener('click', (e) => {
+  if (e.target === checkoutOverlay) closeCheckout()
 })
 
 // --- Initialization ---
@@ -561,7 +697,11 @@ main.appendChild(shopContainer)
 main.appendChild(overlay)
 main.appendChild(cartDrawer)
 main.appendChild(quickViewOverlay)
+main.appendChild(checkoutOverlay)
 main.appendChild(floatingCart)
 
 app.appendChild(main)
 app.appendChild(renderFooter())
+
+// Update UI counts with loaded cart items
+updateCartUI()
