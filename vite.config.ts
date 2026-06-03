@@ -5,7 +5,8 @@ const cleanUrlsPlugin = () => ({
   name: 'clean-urls',
   configureServer(server: any) {
     server.middlewares.use((req: any, res: any, next: any) => {
-      if (req.url && !req.url.includes('.') && req.url !== '/') {
+      const acceptsHtml = req.headers.accept && req.headers.accept.includes('text/html')
+      if (acceptsHtml && req.url && !req.url.includes('.') && req.url !== '/') {
         const [path, query] = req.url.split('?')
         req.url = `${path}.html` + (query ? `?${query}` : '')
       }
