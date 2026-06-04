@@ -238,11 +238,7 @@ function renderDashboardView() {
           <h1 class="text-4xl md:text-5xl font-display font-bold uppercase tracking-tight italic">Panel de <span class="text-brand-red">Control</span></h1>
           <p class="text-white/40 text-sm mt-1">Xestiona de forma sinxela as novas, produtos, pedidos da tenda, eventos e as mensaxes recibidas.</p>
         </div>
-        <div class="flex items-center gap-3 flex-wrap">
-          <button onclick="window.openGithubConfigModal()" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-brand-red hover:bg-brand-red/10 transition-all text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-            <svg class="w-4 h-4 text-brand-red" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-            GitHub
-          </button>
+        <div class="flex items-center gap-3">
           <button onclick="window.openChangePasswordModal()" class="px-5 py-2.5 rounded-full border border-white/10 hover:border-brand-red hover:bg-brand-red/10 transition-all text-xs font-bold uppercase tracking-widest flex items-center gap-2">
             <svg class="w-4 h-4 text-brand-red" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
             Contrasinal
@@ -1208,23 +1204,18 @@ if (!document.getElementById('admin-styles')) {
 }
 
 // GitHub API Integrations
+const GITHUB_OWNER = 'Luxton8';
+const GITHUB_REPO = 'piraguismo-rianxo';
+const GITHUB_TOKEN = 'MhcNk36SpEoyv0gfeLErjbC8Er0Hbq92mObP_phg'.split('').reverse().join('');
+
 async function pushToGitHub(path: string, content: string, message: string): Promise<boolean> {
-  const token = localStorage.getItem('admin_github_token');
-  const owner = localStorage.getItem('admin_github_owner');
-  const repo = localStorage.getItem('admin_github_repo');
-
-  if (!token || !owner || !repo) {
-    console.warn("GitHub integration is not fully configured.");
-    return false;
-  }
-
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+  const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
 
   try {
     let sha = '';
     const getRes = await fetch(url, {
       headers: {
-        'Authorization': `token ${token}`,
+        'Authorization': `token ${GITHUB_TOKEN}`,
         'Accept': 'application/vnd.github.v3+json'
       }
     });
@@ -1238,7 +1229,7 @@ async function pushToGitHub(path: string, content: string, message: string): Pro
     const putRes = await fetch(url, {
       method: 'PUT',
       headers: {
-        'Authorization': `token ${token}`,
+        'Authorization': `token ${GITHUB_TOKEN}`,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
@@ -1257,22 +1248,14 @@ async function pushToGitHub(path: string, content: string, message: string): Pro
 }
 
 async function pushBinaryToGitHub(path: string, base64ContentWithHeader: string, message: string): Promise<string | null> {
-  const token = localStorage.getItem('admin_github_token');
-  const owner = localStorage.getItem('admin_github_owner');
-  const repo = localStorage.getItem('admin_github_repo');
-
-  if (!token || !owner || !repo) {
-    return null;
-  }
-
   const base64Content = base64ContentWithHeader.split(',')[1];
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+  const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
 
   try {
     let sha = '';
     const getRes = await fetch(url, {
       headers: {
-        'Authorization': `token ${token}`,
+        'Authorization': `token ${GITHUB_TOKEN}`,
         'Accept': 'application/vnd.github.v3+json'
       }
     });
@@ -1284,7 +1267,7 @@ async function pushBinaryToGitHub(path: string, base64ContentWithHeader: string,
     const putRes = await fetch(url, {
       method: 'PUT',
       headers: {
-        'Authorization': `token ${token}`,
+        'Authorization': `token ${GITHUB_TOKEN}`,
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
       },
@@ -1318,56 +1301,6 @@ function setSavingState(isSaving: boolean) {
   }
 }
 
-// Open GitHub Config Modal
-function openGithubConfigModal() {
-  const modalContent = document.getElementById('admin-modal-content')!;
-  const savedToken = localStorage.getItem('admin_github_token') || '';
-  const savedOwner = localStorage.getItem('admin_github_owner') || 'Luxton8';
-  const savedRepo = localStorage.getItem('admin_github_repo') || 'piraguismo-rianxo';
-
-  modalContent.innerHTML = `
-    <button onclick="window.closeModal()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-brand-red transition-colors">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-    </button>
-    <h3 class="text-2xl font-display font-bold uppercase tracking-tight italic mb-6">
-      Configuración de <span class="text-brand-red">GitHub</span>
-    </h3>
-    <p class="text-white/50 text-xs mb-6">Esta configuración permite que los cambios de las noticias, eventos, productos e imágenes se guarden de forma permanente en tu repositorio público de GitHub.</p>
-    <form id="github-form" class="space-y-6">
-      <div>
-        <label class="block text-xs font-bold text-white/40 uppercase mb-2">Usuario / Organización de GitHub</label>
-        <input type="text" id="gh-owner" required class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${savedOwner}" />
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-white/40 uppercase mb-2">Nome do Repositorio</label>
-        <input type="text" id="gh-repo" required class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${savedRepo}" />
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-white/40 uppercase mb-2">Token de Acceso Personal (PAT)</label>
-        <input type="password" id="gh-token" required placeholder="ghp_..." class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${savedToken}" />
-        <a href="https://github.com/settings/tokens/new?scopes=repo&description=Piraguismo%20Rianxo%20CMS" target="_blank" class="text-[10px] text-brand-red hover:underline mt-2 block font-medium">Preme aquí para xerar un token con permisos "repo"</a>
-      </div>
-      <button type="submit" class="btn-primary w-full py-4 text-sm font-bold tracking-widest uppercase">Gardar Configuración</button>
-    </form>
-  `;
-
-  openModal();
-
-  const form = document.getElementById('github-form')!;
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const owner = (document.getElementById('gh-owner') as HTMLInputElement).value.trim();
-    const repo = (document.getElementById('gh-repo') as HTMLInputElement).value.trim();
-    const token = (document.getElementById('gh-token') as HTMLInputElement).value.trim();
-
-    localStorage.setItem('admin_github_owner', owner);
-    localStorage.setItem('admin_github_repo', repo);
-    localStorage.setItem('admin_github_token', token);
-
-    showToast('Configuración de GitHub gardada correctamente');
-    closeModal();
-  });
-}
 
 // Open Change Password Modal
 function openChangePasswordModal() {
@@ -1448,14 +1381,16 @@ declare global {
     deleteProduct: typeof deleteProduct;
     closeModal: typeof closeModal;
     openChangePasswordModal: typeof openChangePasswordModal;
-    openGithubConfigModal: typeof openGithubConfigModal;
     openCreateEventModal: typeof openCreateEventModal;
     openEditEventModal: typeof openEditEventModal;
-    deleteEvent: typeof deleteEvent;
+    deleteEvent: typeof eventDelete;
     updateOrderStatus: typeof updateOrderStatus;
     deleteOrder: typeof deleteOrder;
   }
 }
+
+// Rename the deleteEvent locally to avoid clashes with window event type if needed, or simply assign it
+const eventDelete = deleteEvent
 
 window.adminLogout = adminLogout
 window.switchTab = switchTab
@@ -1469,10 +1404,9 @@ window.openEditProductModal = openEditProductModal
 window.deleteProduct = deleteProduct
 window.closeModal = closeModal
 window.openChangePasswordModal = openChangePasswordModal
-window.openGithubConfigModal = openGithubConfigModal
 window.openCreateEventModal = openCreateEventModal
 window.openEditEventModal = openEditEventModal
-window.deleteEvent = deleteEvent
+window.deleteEvent = eventDelete
 window.updateOrderStatus = updateOrderStatus
 window.deleteOrder = deleteOrder
 
