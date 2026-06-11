@@ -1,5 +1,14 @@
 [
   {
+    "id": 1781201020191,
+    "title": "Proba",
+    "category": "Competición",
+    "image": "",
+    "description": "Este texto é unha proba de descripción",
+    "content": "Este texto é unha proba de contido completo",
+    "date": "11/06/2026"
+  },
+  {
     "id": 1,
     "title": "Éxito no Campionato Galego de Pista",
     "category": "Competición",
