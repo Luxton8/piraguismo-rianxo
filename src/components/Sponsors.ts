@@ -47,6 +47,12 @@ export function renderSponsors() {
         `).join('')}
       </div>
 
+      <!-- Other Sponsors Container -->
+      <div id="other-sponsors-container" class="hidden mt-20 pt-16 border-t border-gray-100">
+        <p class="text-gray-400 font-bold mb-12 uppercase tracking-wider text-[10px] tracking-widest">Colaboradores e Outros Patrocinadores</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 items-center justify-center" id="other-sponsors-grid"></div>
+      </div>
+
       <div class="mt-20 max-w-3xl mx-auto border-t border-gray-100 pt-10">
         <p class="text-gray-400 text-xs leading-relaxed italic">
           Grazas ao apoio dos nosos patrocinadores, cada tempada podemos promover a práctica deportiva de centos de nenos e adultos, fomentando a saúde e os valores do piragüismo na nosa vila.
@@ -54,5 +60,34 @@ export function renderSponsors() {
       </div>
     </div>
   `
+
+  // Load other sponsors dynamically
+  setTimeout(async () => {
+    try {
+      const res = await fetch('/data/sponsors.json')
+      if (res.ok) {
+        const otherSponsors = await res.json()
+        if (Array.isArray(otherSponsors) && otherSponsors.length > 0) {
+          const container = document.getElementById('other-sponsors-container')
+          const grid = document.getElementById('other-sponsors-grid')
+          if (container && grid) {
+            grid.innerHTML = otherSponsors.map(sp => `
+              <a href="${sp.url || '#'}" ${sp.url ? 'target="_blank" rel="noopener noreferrer"' : 'onclick="return false;"'} class="h-14 lg:h-20 flex items-center justify-center group cursor-pointer p-3 border border-gray-100 hover:border-gray-250 rounded-xl bg-white hover:shadow-md transition-all duration-300">
+                ${sp.logo ? `
+                  <img src="${sp.logo}" alt="${sp.name}" loading="lazy" decoding="async" class="h-full object-contain opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500" />
+                ` : `
+                  <span class="text-[10px] font-display font-bold text-gray-400 group-hover:text-brand-red transition-all duration-500 uppercase tracking-wider text-center leading-tight">${sp.name}</span>
+                `}
+              </a>
+            `).join('')
+            container.classList.remove('hidden')
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Error loading other sponsors:', e)
+    }
+  }, 0)
+
   return section
 }

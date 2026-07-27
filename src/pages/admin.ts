@@ -323,8 +323,11 @@ function renderDashboardView() {
         <button onclick="window.switchTab('calendario')" class="px-6 py-4 font-display font-bold uppercase tracking-wider text-xs border-b-2 transition-all cursor-pointer ${activeTab === 'calendario' ? 'border-brand-red text-brand-red' : 'border-transparent text-gray-400 hover:text-gray-700'}">
           Calendario (${events.length})
         </button>
-        <button onclick="window.switchTab('cookies')" class="px-6 py-4 font-display font-bold uppercase tracking-wider text-xs border-b-2 transition-all cursor-pointer ${activeTab === 'cookies' ? 'border-brand-red text-brand-red' : 'border-transparent text-gray-400 hover:text-gray-700'}">
-          Cookies e Privacidade
+        <button onclick="window.switchTab('patrocinadores')" class="px-6 py-4 font-display font-bold uppercase tracking-wider text-xs border-b-2 transition-all cursor-pointer ${activeTab === 'patrocinadores' ? 'border-brand-red text-brand-red' : 'border-transparent text-gray-400 hover:text-gray-700'}">
+          Patrocinadores (${JSON.parse(localStorage.getItem('admin_sponsors') || '[]').length})
+        </button>
+        <button onclick="window.switchTab('mantenemento')" class="px-6 py-4 font-display font-bold uppercase tracking-wider text-xs border-b-2 transition-all cursor-pointer ${activeTab === 'mantenemento' ? 'border-brand-red text-brand-red' : 'border-transparent text-gray-400 hover:text-gray-700'}">
+          Mantemento
         </button>
       </div>
 
@@ -337,7 +340,8 @@ function renderDashboardView() {
         ${activeTab === 'novas' ? renderNovasTab(novas) : ''}
         ${activeTab === 'tenda' ? renderTendaTab(products) : ''}
         ${activeTab === 'calendario' ? renderCalendarioTab(events) : ''}
-        ${activeTab === 'cookies' ? renderCookiesTab() : ''}
+        ${activeTab === 'patrocinadores' ? renderSponsorsTab() : ''}
+        ${activeTab === 'mantenemento' ? renderMantenementoTab() : ''}
       </div>
     </div>
 
@@ -877,165 +881,63 @@ function deleteEnrollment(id: number) {
   showToast('Inscrición da escola eliminada con éxito')
   renderDashboardView()
 }
-
 // ----------------------------------------------------
-// TAB 5: Cookies and Privacy
+// TAB 5: Sponsors
 // ----------------------------------------------------
-function renderCookiesTab(): string {
-  const consents = JSON.parse(localStorage.getItem('admin_cookie_consents') || '[]')
-  const scripts = JSON.parse(localStorage.getItem('admin_cookie_scripts') || '[]')
-
+function renderSponsorsTab(): string {
+  const sponsors = JSON.parse(localStorage.getItem('admin_sponsors') || '[]')
+  
   return `
-    <div class="space-y-8 font-sans text-gray-800">
-      <div class="flex justify-between items-center border-b border-gray-150 pb-4">
+    <div class="space-y-6 animate-fade-in-up text-gray-800 font-sans">
+      <div class="flex justify-between items-center border-b border-gray-100 pb-5">
         <div>
-          <h2 class="text-xl font-display font-black uppercase text-gray-900">Cookies e Privacidade</h2>
-          <p class="text-xs text-gray-500 font-semibold mt-1">Xestiona o cumprimento do RGPD, scripts de terceiros e consentimentos rexistrados.</p>
+          <h3 class="font-display font-bold text-xl uppercase tracking-tight text-gray-900">Patrocinadores e Colaboradores</h3>
+          <p class="text-xs text-gray-500 mt-1 font-semibold">Xestiona os patrocinadores adicionais e colaboradores da web.</p>
         </div>
+        <button onclick="window.openCreateSponsorModal()" class="px-5 py-2.5 bg-brand-red text-white text-xs font-bold uppercase tracking-widest rounded-full hover:bg-red-700 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          Engadir Patrocinador
+        </button>
       </div>
 
-      <!-- Cookies Audit Inventory -->
-      <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
-        <h3 class="font-display font-black text-xs uppercase tracking-wider text-gray-900">Inventario Técnico de Cookies</h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr class="bg-gray-50 border-b border-gray-250 font-bold uppercase tracking-wider text-gray-700">
-                <th class="p-4">Nome</th>
-                <th class="p-4">Categoría</th>
-                <th class="p-4">Provedor</th>
-                <th class="p-4">Duración</th>
-                <th class="p-4">Estado</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-150 font-semibold text-gray-550">
-              <tr>
-                <td class="p-4 font-mono text-gray-900">shop_cart</td>
-                <td class="p-4 text-green-600">Necesaria</td>
-                <td class="p-4">Propio (Local)</td>
-                <td class="p-4">Persistente</td>
-                <td class="p-4 text-green-600">Activo (Tenda)</td>
-              </tr>
-              <tr>
-                <td class="p-4 font-mono text-gray-900">cookie_consent</td>
-                <td class="p-4 text-green-600">Necesaria</td>
-                <td class="p-4">Propio (Local)</td>
-                <td class="p-4">1 Ano</td>
-                <td class="p-4 text-green-600">Activo (Consentimento)</td>
-              </tr>
-              <tr>
-                <td class="p-4 font-mono text-gray-900">admin_authenticated</td>
-                <td class="p-4 text-green-600">Necesaria</td>
-                <td class="p-4">Propio (Local)</td>
-                <td class="p-4">Sesión</td>
-                <td class="p-4 text-green-600">Activo (Sesión)</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Add Custom Scripts Form & Active List -->
-      <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-6">
-        <h3 class="font-display font-black text-xs uppercase tracking-wider text-gray-900">Scripts de Terceiros e Píxeles</h3>
-        
-        <form id="script-config-form" class="space-y-4" onsubmit="window.addCustomCookieScript(event)">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1.5">Categoría de Consentimento</label>
-              <select id="script-category" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-red transition-all cursor-pointer">
-                <option>Preferencias</option>
-                <option>Estatística</option>
-                <option>Marketing</option>
-              </select>
+      <div class="grid grid-cols-1 gap-4">
+        ${sponsors.length === 0 ? `
+          <div class="bg-white border border-gray-200 shadow-sm rounded-2xl py-20 text-center">
+            <p class="text-gray-400 text-base font-semibold">Non hai patrocinadores adicionais aínda.</p>
+          </div>
+        ` : sponsors.map((sp: any) => `
+          <div class="bg-white border border-gray-200 shadow-sm p-6 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-gray-300 transition-colors">
+            <div class="flex items-center gap-4 flex-1">
+              <div class="w-20 h-16 bg-gray-50 rounded-xl overflow-hidden shrink-0 flex items-center justify-center border border-gray-200 p-2">
+                ${sp.logo ? `<img src="${sp.logo}" class="h-full object-contain" />` : '<span class="text-[9px] text-gray-400 font-bold uppercase">Sen logo</span>'}
+              </div>
+              <div class="flex-1">
+                <h4 class="font-display font-bold text-lg text-gray-900">${sp.name}</h4>
+                <a href="${sp.url || '#'}" target="_blank" class="text-xs text-brand-red hover:underline font-semibold flex items-center gap-1 mt-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                  ${sp.url || 'Sen enlace'}
+                </a>
+              </div>
             </div>
-            <div>
-              <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1.5">Nome do Script (ex: Google Analytics)</label>
-              <input type="text" id="script-name" required class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-red transition-all" placeholder="Nome identificativo" />
+            
+            <div class="flex items-center gap-3 shrink-0">
+              <button onclick="window.openEditSponsorModal(${sp.id})" class="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-sm">Editar</button>
+              <button onclick="window.deleteSponsor(${sp.id})" class="px-4 py-2 bg-brand-red/10 border border-brand-red/20 text-brand-red hover:bg-brand-red hover:text-white rounded-lg text-xs font-bold transition-colors cursor-pointer">Eliminar</button>
             </div>
           </div>
-          <div>
-            <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1.5">Código JavaScript (Non incluir etiquetas &lt;script&gt;)</label>
-            <textarea id="script-code" required class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-xs font-mono focus:outline-none focus:border-brand-red transition-all h-28 resize-y" placeholder="console.log('Script carregado...');"></textarea>
-          </div>
-          <button type="submit" class="btn-primary py-3 px-6 text-xs uppercase tracking-widest cursor-pointer shadow-sm">Engadir Script</button>
-        </form>
-
-        <div class="space-y-4 pt-4 border-t border-gray-150">
-          <h4 class="font-bold text-xs uppercase text-gray-700">Scripts Configurados</h4>
-          ${scripts.length === 0 ? `
-            <p class="text-xs text-gray-400 font-semibold italic">Non hai scripts configurados de terceiros.</p>
-          ` : `
-            <div class="space-y-3">
-              ${scripts.map((scr: any) => `
-                <div class="p-4 bg-gray-50 border border-gray-250 rounded-xl flex justify-between items-center gap-4 text-xs">
-                  <div class="space-y-1">
-                    <div class="flex items-center gap-2">
-                      <span class="font-bold text-gray-800">${scr.name}</span>
-                      <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${
-                        scr.category === 'Marketing' ? 'bg-purple-50 border border-purple-200 text-purple-600' :
-                        scr.category === 'Estatística' ? 'bg-blue-50 border border-blue-200 text-blue-600' :
-                        'bg-yellow-50 border border-yellow-250 text-yellow-750'
-                      }">${scr.category}</span>
-                    </div>
-                    <pre class="text-[10px] bg-white border border-gray-200 p-2 rounded-lg font-mono text-gray-500 max-h-20 overflow-y-auto whitespace-pre-wrap">${scr.code}</pre>
-                  </div>
-                  <div class="flex items-center gap-2 shrink-0">
-                    <button onclick="window.toggleCustomCookieScript('${scr.id}')" class="px-3 py-1.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 font-bold transition-all cursor-pointer">
-                      ${scr.active ? 'Desactivar' : 'Activar'}
-                    </button>
-                    <button onclick="window.deleteCustomCookieScript('${scr.id}')" class="px-3 py-1.5 rounded-lg bg-brand-red/10 border border-brand-red/25 hover:bg-brand-red hover:text-white font-bold text-brand-red transition-all cursor-pointer">
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          `}
-        </div>
+        `).join('')}
       </div>
+    </div>
+  `
+}
 
-      <!-- Registered Consent Audit Logs -->
-      <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
-        <h3 class="font-display font-black text-xs uppercase tracking-wider text-gray-900">Rexistro de Consentimentos Auditables</h3>
-        <p class="text-xs text-gray-400 font-semibold leading-relaxed">Mostra os IDs de consentimento técnico anónimos que foron aceptados polos usuarios.</p>
-        <div class="overflow-x-auto max-h-72 border border-gray-250 rounded-xl">
-          <table class="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr class="bg-gray-50 border-b border-gray-250 font-bold uppercase tracking-wider text-gray-700">
-                <th class="p-4">ID de Consentimento</th>
-                <th class="p-4">Data e Hora</th>
-                <th class="p-4">Categorías Aceptadas</th>
-                <th class="p-4">Versión Política</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-150 font-semibold text-gray-550">
-              ${consents.length === 0 ? `
-                <tr>
-                  <td colspan="4" class="p-4 text-center text-gray-450 italic">Non hai consentimentos rexistrados aínda.</td>
-                </tr>
-              ` : consents.map((log: any) => `
-                <tr>
-                  <td class="p-4 font-mono text-gray-900">${log.id}</td>
-                  <td class="p-4">${new Date(log.timestamp).toLocaleString('gl-ES')}</td>
-                  <td class="p-4">
-                    <span class="px-1.5 py-0.5 rounded bg-gray-100 border border-gray-250 text-[9px] uppercase font-black text-gray-600">Néc</span>
-                    ${log.categories.preferencias ? '<span class="px-1.5 py-0.5 rounded bg-yellow-50 border border-yellow-250 text-[9px] uppercase font-black text-yellow-750">Pref</span>' : ''}
-                    ${log.categories.estatistica ? '<span class="px-1.5 py-0.5 rounded bg-blue-50 border border-blue-200 text-[9px] uppercase font-black text-blue-600">Est</span>' : ''}
-                    ${log.categories.marketing ? '<span class="px-1.5 py-0.5 rounded bg-purple-50 border border-purple-200 text-[9px] uppercase font-black text-purple-600">Mkt</span>' : ''}
-                  </td>
-                  <td class="p-4 font-mono text-gray-800">${log.policyVersion}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
+function renderMantenementoTab(): string {
+  return `
+    <div class="space-y-8 font-sans text-gray-800 animate-fade-in-up">
       <!-- Backups and Restore -->
       <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
         <h3 class="font-display font-black text-xs uppercase tracking-wider text-gray-900">Copias de Seguridade</h3>
-        <p class="text-xs text-gray-400 font-semibold leading-relaxed">Descarga unha copia completa dos datos da web en formato JSON ou restaura unha copia existente.</p>
+        <p class="text-xs text-gray-500 font-semibold leading-relaxed">Descarga unha copia completa dos datos da web en formato JSON ou restaura unha copia existente.</p>
         <div class="flex flex-wrap gap-3">
           <button onclick="window.downloadBackupJSON()" class="px-5 py-2.5 rounded-xl bg-brand-red text-white hover:bg-red-700 transition-all text-[10px] font-black uppercase tracking-wider cursor-pointer shadow-md">Descargar Copia JSON</button>
           
@@ -1076,42 +978,147 @@ function renderCookiesTab(): string {
   `
 }
 
-function addCustomCookieScript(event: Event) {
-  event.preventDefault()
-  const cat = (document.getElementById('script-category') as HTMLSelectElement).value
-  const name = (document.getElementById('script-name') as HTMLInputElement).value
-  const code = (document.getElementById('script-code') as HTMLTextAreaElement).value
+// Open Create Sponsor Modal
+function openCreateSponsorModal() {
+  editingItem = null
+  renderSponsorModalContent()
+  openModal()
+}
 
-  const scripts = JSON.parse(localStorage.getItem('admin_cookie_scripts') || '[]')
-  scripts.push({
-    id: 'script_' + Date.now(),
-    category: cat,
-    name,
-    code,
-    active: true
+// Open Edit Sponsor Modal
+function openEditSponsorModal(id: number) {
+  const sponsors = JSON.parse(localStorage.getItem('admin_sponsors') || '[]')
+  const sp = sponsors.find((s: any) => s.id === id)
+  if (!sp) return
+
+  editingItem = { type: 'sponsor' as any, data: sp }
+  renderSponsorModalContent(sp)
+  openModal()
+}
+
+// Render Sponsor Modal Content
+function renderSponsorModalContent(sp?: any) {
+  const modalContent = document.getElementById('admin-modal-content')!
+  modalContent.innerHTML = `
+    <button onclick="window.closeModal()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-white text-gray-800 flex items-center justify-center hover:bg-brand-red hover:text-white transition-colors border border-gray-200 shadow-sm cursor-pointer">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+    <h3 class="text-2xl font-display font-bold uppercase tracking-tight text-gray-900 mb-6">
+      ${sp ? 'Editar' : 'Novo'} <span class="text-brand-red">Patrocinador</span>
+    </h3>
+    <form id="sponsor-form" class="space-y-6 text-gray-855">
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nome do Patrocinador</label>
+        <input type="text" id="sp-name" required class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${sp?.name || ''}" />
+      </div>
+      
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Enlace da Web (URL)</label>
+        <input type="url" id="sp-url" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${sp?.url || ''}" placeholder="https://..." />
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">URL do Logo (ou subir imaxe abaixo)</label>
+        <input type="text" id="sp-logo" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${sp?.logo || ''}" placeholder="/logo-exemplo.png" />
+      </div>
+
+      <div class="bg-gray-50 p-6 rounded-2xl border border-gray-200">
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Subir arquivo de imaxe (opcional)</label>
+        <div class="flex items-center gap-4">
+          <label class="px-5 py-2.5 bg-white border border-gray-300 hover:border-brand-red hover:text-brand-red rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm">
+            Seleccionar archivo
+            <input type="file" id="sp-file-input" accept="image/*" class="hidden" />
+          </label>
+          <span id="sp-file-name" class="text-xs text-gray-400 font-semibold truncate max-w-xs">Ningunha imaxe seleccionada</span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary w-full py-4 text-sm font-bold tracking-widest uppercase cursor-pointer">Gardar Cambios</button>
+    </form>
+  `
+
+  const fileInput = document.getElementById('sp-file-input') as HTMLInputElement
+  const fileNameSpan = document.getElementById('sp-file-name')!
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files && fileInput.files[0]) {
+      fileNameSpan.textContent = fileInput.files[0].name
+    } else {
+      fileNameSpan.textContent = 'Ningunha imaxe seleccionada'
+    }
   })
-  localStorage.setItem('admin_cookie_scripts', JSON.stringify(scripts))
-  showToast('Script de terceiros engadido con éxito')
-  renderDashboardView()
-}
 
-function deleteCustomCookieScript(id: string) {
-  if (!confirm('¿Seguro que queres eliminar este script?')) return
-  const scripts = JSON.parse(localStorage.getItem('admin_cookie_scripts') || '[]')
-  const filtered = scripts.filter((s: any) => s.id !== id)
-  localStorage.setItem('admin_cookie_scripts', JSON.stringify(filtered))
-  showToast('Script de terceiros eliminado')
-  renderDashboardView()
-}
+  const form = document.getElementById('sponsor-form')!
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    setSavingState(true)
 
-function toggleCustomCookieScript(id: string) {
-  const scripts = JSON.parse(localStorage.getItem('admin_cookie_scripts') || '[]')
-  const found = scripts.find((s: any) => s.id === id)
-  if (found) {
-    found.active = !found.active
-    localStorage.setItem('admin_cookie_scripts', JSON.stringify(scripts))
-    showToast(found.active ? 'Script activado' : 'Script desactivado')
+    const name = (document.getElementById('sp-name') as HTMLInputElement).value
+    const url = (document.getElementById('sp-url') as HTMLInputElement).value
+    let logo = (document.getElementById('sp-logo') as HTMLInputElement).value
+
+    if (fileInput.files && fileInput.files[0]) {
+      const file = fileInput.files[0]
+      const reader = new FileReader()
+      const uploadPromise = new Promise<string | null>((resolveReader) => {
+        reader.onload = async () => {
+          const base64 = reader.result as string
+          const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`
+          const ghPath = `public/images/sponsors/${filename}`
+          const uploadedUrl = await pushBinaryToGitHub(ghPath, base64, `Upload sponsor logo: ${file.name}`)
+          resolveReader(uploadedUrl)
+        }
+        reader.onerror = () => resolveReader(null)
+      })
+      reader.readAsDataURL(file)
+      const resUrl = await uploadPromise
+      if (resUrl) {
+        logo = resUrl
+      }
+    }
+
+    const sponsors: any[] = JSON.parse(localStorage.getItem('admin_sponsors') || '[]')
+
+    if (editingItem && editingItem.type === ('sponsor' as any)) {
+      const index = sponsors.findIndex(s => s.id === editingItem?.data.id)
+      if (index > -1) {
+        sponsors[index] = {
+          ...sponsors[index],
+          name,
+          logo,
+          url
+        }
+      }
+      showToast('Patrocinador actualizado')
+    } else {
+      const newSp = {
+        id: Date.now(),
+        name,
+        logo,
+        url
+      }
+      sponsors.push(newSp)
+      showToast('Novo patrocinador engadido')
+    }
+
+    localStorage.setItem('admin_sponsors', JSON.stringify(sponsors))
+    await pushToGitHub('public/data/sponsors.json', JSON.stringify(sponsors, null, 2), `Update sponsors data`)
+
+    setSavingState(false)
+    closeModal()
     renderDashboardView()
+  })
+}
+
+// Delete Sponsor
+async function deleteSponsor(id: number) {
+  if (confirm('¿Seguro que queres eliminar este patrocinador?')) {
+    const sponsors: any[] = JSON.parse(localStorage.getItem('admin_sponsors') || '[]')
+    const filtered = sponsors.filter(s => s.id !== id)
+    localStorage.setItem('admin_sponsors', JSON.stringify(filtered))
+    await pushToGitHub('public/data/sponsors.json', JSON.stringify(filtered, null, 2), `Delete sponsor: ${id}`)
+    renderDashboardView()
+    showToast('Patrocinador eliminado')
   }
 }
 
@@ -1971,9 +1978,9 @@ declare global {
     deleteEvent: typeof eventDelete;
     updateOrderStatus: typeof updateOrderStatus;
     deleteOrder: typeof deleteOrder;
-    addCustomCookieScript: typeof addCustomCookieScript;
-    deleteCustomCookieScript: typeof deleteCustomCookieScript;
-    toggleCustomCookieScript: typeof toggleCustomCookieScript;
+    openCreateSponsorModal: typeof openCreateSponsorModal;
+    openEditSponsorModal: typeof openEditSponsorModal;
+    deleteSponsor: typeof deleteSponsor;
     deletePartner: typeof deletePartner;
     deleteEnrollment: typeof deleteEnrollment;
     exportPartnersToCSV: typeof exportPartnersToCSV;
@@ -2006,9 +2013,9 @@ window.openEditEventModal = openEditEventModal
 window.deleteEvent = eventDelete
 window.updateOrderStatus = updateOrderStatus
 window.deleteOrder = deleteOrder
-window.addCustomCookieScript = addCustomCookieScript
-window.deleteCustomCookieScript = deleteCustomCookieScript
-window.toggleCustomCookieScript = toggleCustomCookieScript
+window.openCreateSponsorModal = openCreateSponsorModal
+window.openEditSponsorModal = openEditSponsorModal
+window.deleteSponsor = deleteSponsor
 window.deletePartner = deletePartner
 window.deleteEnrollment = deleteEnrollment
 window.exportPartnersToCSV = exportPartnersToCSV
@@ -2020,4 +2027,16 @@ window.restoreBackupJSON = restoreBackupJSON
 window.filterEvents = filterEvents
 
 // Initialize and setup
-renderPage()
+async function initAdmin() {
+  try {
+    const res = await fetch('/data/sponsors.json')
+    if (res.ok) {
+      const data = await res.json()
+      localStorage.setItem('admin_sponsors', JSON.stringify(data))
+    }
+  } catch (err) {
+    console.error("Could not load sponsors from JSON:", err)
+  }
+  renderPage()
+}
+initAdmin()
