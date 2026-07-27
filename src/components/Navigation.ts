@@ -36,6 +36,7 @@ export function renderNavigation() {
               <a href="/club" class="block px-5 py-3 text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-brand-red/5 hover:text-brand-red rounded-xl transition-all">Quen Somos</a>
               <a href="/escola" class="block px-5 py-3 text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-brand-red/5 hover:text-brand-red rounded-xl transition-all">Escola Deportiva</a>
               <a href="/galeria" class="block px-5 py-3 text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-brand-red/5 hover:text-brand-red rounded-xl transition-all">Galería Fotográfica</a>
+              <a href="/patrocinadores" class="block px-5 py-3 text-xs font-bold uppercase tracking-wider text-gray-700 hover:bg-brand-red/5 hover:text-brand-red rounded-xl transition-all">Patrocinadores</a>
               <div class="border-t border-gray-100 my-2"></div>
               <a href="/socios" class="block px-5 py-3 text-xs font-bold uppercase tracking-wider text-white bg-brand-red hover:bg-red-700 text-center rounded-xl transition-all shadow-md">Faste Socio</a>
             </div>
@@ -97,6 +98,7 @@ export function renderNavigation() {
                 <a href="/club" class="text-2xl font-display font-bold text-gray-700 hover:text-brand-red hover:translate-x-2 transition-all mobile-nav-link block">Quen Somos</a>
                 <a href="/escola" class="text-2xl font-display font-bold text-gray-700 hover:text-brand-red hover:translate-x-2 transition-all mobile-nav-link block">Escola Deportiva</a>
                 <a href="/galeria" class="text-2xl font-display font-bold text-gray-700 hover:text-brand-red hover:translate-x-2 transition-all mobile-nav-link block">Galería</a>
+                <a href="/patrocinadores" class="text-2xl font-display font-bold text-gray-700 hover:text-brand-red hover:translate-x-2 transition-all mobile-nav-link block">Patrocinadores</a>
                 <a href="/socios" class="text-2xl font-display font-bold text-gray-700 hover:text-brand-red hover:translate-x-2 transition-all mobile-nav-link block">Faste Socio</a>
               </div>
             </div>

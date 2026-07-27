@@ -39,6 +39,7 @@ export function renderFooter() {
             <li><a href="/club" class="hover:text-brand-red transition-colors">O Club</a></li>
             <li><a href="/escola" class="hover:text-brand-red transition-colors">Escola</a></li>
             <li><a href="/galeria" class="hover:text-brand-red transition-colors">Galería</a></li>
+            <li><a href="/patrocinadores" class="hover:text-brand-red transition-colors">Patrocinadores</a></li>
             <li><a href="/socios" class="hover:text-brand-red transition-colors font-bold text-brand-red">Faste Socio</a></li>
             <li><a href="/tenda" class="hover:text-brand-red transition-colors">Tenda</a></li>
           </ul>

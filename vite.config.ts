@@ -34,6 +34,7 @@ export default defineConfig({
         socios: resolve(__dirname, 'socios.html'),
         escola: resolve(__dirname, 'escola.html'),
         galeria: resolve(__dirname, 'galeria.html'),
+        patrocinadores: resolve(__dirname, 'patrocinadores.html'),
         '404': resolve(__dirname, '404.html'),
       },
     },
