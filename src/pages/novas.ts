@@ -46,7 +46,7 @@ let novas: Nova[] = []
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const main = document.createElement('main')
-main.className = 'pt-32 pb-24 container mx-auto px-6'
+main.className = 'pt-32 pb-24 container mx-auto px-6 text-gray-850'
 
 async function init() {
   try {
@@ -77,38 +77,73 @@ async function init() {
 }
 
 function renderPage() {
+  const featuredNova = novas[0];
+  const otherNovas = novas.slice(1);
+
   main.innerHTML = `
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
-      <div>
-        <h1 class="text-6xl font-display font-bold uppercase tracking-tighter italic">Novas <span class="text-brand-red">do Club</span></h1>
-        <p class="text-white/50 text-lg mt-2">Mantente ao día de todas as novidades, competicións e actividades do Club Piragüismo Rianxo.</p>
+    <!-- Header heading component -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 font-sans">
+      <div class="space-y-2">
+        <span class="text-[10px] font-black text-brand-red uppercase tracking-widest">Actualidade</span>
+        <h1 class="text-4xl md:text-6xl font-display font-black tracking-tight text-gray-900 uppercase">Novas do Club</h1>
+        <p class="text-gray-500 text-xs sm:text-sm font-semibold max-w-2xl">Mantente ao día de todas as novidades, competicións e actividades do Club Piragüismo Rianxo.</p>
       </div>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="novas-grid">
-      ${novas.map(nova => `
-        <div class="glass-card overflow-hidden group flex flex-col h-full">
-          <div class="h-64 bg-white/5 overflow-hidden relative shrink-0">
-            ${nova.image ? `
-              <img src="${nova.image}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="${nova.title}" />
+    <!-- NewsFeaturedCard -->
+    ${featuredNova ? `
+      <div class="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-sm hover:shadow-lg hover:border-brand-red/30 transition-all duration-300 mb-12 font-sans group">
+        <div class="grid grid-cols-1 lg:grid-cols-12">
+          <div class="lg:col-span-7 h-80 lg:h-96 bg-gray-50 relative overflow-hidden">
+            ${featuredNova.image ? `
+              <img src="${featuredNova.image}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="${featuredNova.title}" />
             ` : `
-              <div class="w-full h-full bg-brand-red/10 flex items-center justify-center text-white/20 italic font-display">Imaxe da nova</div>
+              <div class="w-full h-full bg-brand-red/[0.03] flex items-center justify-center text-gray-300 italic font-display text-lg">Imaxe da nova destacada</div>
             `}
-            <div class="absolute top-4 left-4 bg-brand-dark/80 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/70">${nova.date}</div>
+            <div class="absolute top-6 left-6 bg-white/95 px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider text-gray-500 shadow-sm">${featuredNova.date}</div>
+          </div>
+          <div class="lg:col-span-5 p-8 sm:p-12 flex flex-col justify-center">
+            <span class="text-[9px] font-black text-brand-red uppercase tracking-widest mb-4 block">Novidade Destacada</span>
+            <h3 class="text-2xl sm:text-3xl font-display font-black text-gray-950 group-hover:text-brand-red transition-colors leading-tight mb-4 line-clamp-3">${featuredNova.title}</h3>
+            <p class="text-gray-500 text-xs sm:text-sm leading-relaxed mb-6 font-semibold line-clamp-4">${featuredNova.description}</p>
+            <div>
+              <button onclick="window.showNovaDetails(${featuredNova.id})" class="btn-primary py-3.5 px-6 text-xs uppercase tracking-widest cursor-pointer shadow-md inline-flex items-center gap-1.5">
+                Ler máis 
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    ` : ''}
+
+    <!-- NewsGrid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 font-sans" id="novas-grid">
+      ${otherNovas.map(nova => `
+        <div class="bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden group flex flex-col h-full hover:shadow-lg hover:border-brand-red/35 transition-all duration-300">
+          <div class="h-56 bg-gray-50 overflow-hidden relative shrink-0">
+            ${nova.image ? `
+              <img src="${nova.image}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="${nova.title}" />
+            ` : `
+              <div class="w-full h-full bg-brand-red/[0.03] flex items-center justify-center text-gray-300 italic font-display text-sm">Imaxe da nova</div>
+            `}
+            <div class="absolute top-4 left-4 bg-white/95 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider text-gray-500 shadow-sm">${nova.date}</div>
           </div>
           <div class="p-8 flex flex-col flex-1">
-            <span class="text-brand-red font-bold text-xs uppercase tracking-widest mb-4 block">${nova.category}</span>
-            <h3 class="text-2xl font-display font-bold mb-4 group-hover:text-brand-red transition-colors line-clamp-2">${nova.title}</h3>
-            <p class="text-white/50 text-sm mb-6 leading-relaxed flex-1 line-clamp-3">${nova.description}</p>
-            <button onclick="window.showNovaDetails(${nova.id})" class="font-bold text-sm border-b border-brand-red pb-1 self-start hover:text-brand-red transition-colors">Ler máis</button>
+            <span class="text-[9px] font-black text-brand-red uppercase tracking-widest mb-3 block">${nova.category}</span>
+            <h3 class="text-xl font-display font-black text-gray-950 group-hover:text-brand-red transition-colors leading-snug mb-3 line-clamp-2">${nova.title}</h3>
+            <p class="text-gray-500 text-xs sm:text-sm leading-relaxed mb-6 font-semibold flex-1 line-clamp-3">${nova.description}</p>
+            <button onclick="window.showNovaDetails(${nova.id})" class="font-bold text-xs uppercase tracking-wider text-brand-red border-b-2 border-brand-red/20 pb-0.5 self-start hover:text-red-700 hover:border-red-700 transition-all cursor-pointer">
+              Ler máis
+            </button>
           </div>
         </div>
       `).join('')}
     </div>
 
     <!-- Detail Modal -->
-    <div id="nova-modal" class="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-6">
-      <div class="w-full max-w-3xl bg-brand-grey border border-white/5 rounded-3xl relative max-h-[90vh] overflow-y-auto" id="nova-modal-content">
+    <div id="nova-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-6">
+      <div class="w-full max-w-3xl bg-white border border-gray-200 rounded-3xl relative max-h-[90vh] overflow-y-auto shadow-2xl" id="nova-modal-content">
         <!-- Content injected by JavaScript -->
       </div>
     </div>
@@ -123,27 +158,27 @@ function showNovaDetails(id: number) {
   const modalContent = document.getElementById('nova-modal-content')!
 
   modalContent.innerHTML = `
-    <button onclick="window.closeNovaDetails()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/80 text-white flex items-center justify-center hover:bg-brand-red transition-colors z-10 border border-white/10">
+    <button onclick="window.closeNovaDetails()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-white text-gray-800 flex items-center justify-center hover:bg-brand-red hover:text-white transition-colors z-10 border border-gray-200 shadow-md">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
     </button>
     
-    <div class="h-80 w-full bg-white/5 relative">
+    <div class="h-80 w-full bg-gray-50 relative">
       ${nova.image ? `
         <img src="${nova.image}" class="w-full h-full object-cover" alt="${nova.title}" />
       ` : `
-        <div class="w-full h-full bg-brand-red/10 flex items-center justify-center text-white/20 italic font-display text-2xl">Imaxe da nova</div>
+        <div class="w-full h-full bg-brand-red/5 flex items-center justify-center text-gray-300 italic font-display text-2xl">Imaxe da nova</div>
       `}
-      <div class="absolute inset-0 bg-gradient-to-t from-brand-grey via-brand-grey/20 to-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent"></div>
     </div>
     
-    <div class="p-8 md:p-12 -mt-12 relative z-10 bg-brand-grey rounded-b-3xl">
+    <div class="p-8 md:p-12 -mt-12 relative z-10 bg-white rounded-b-3xl">
       <div class="flex items-center gap-4 mb-4">
         <span class="px-3 py-1 bg-brand-red text-white text-xs font-bold uppercase tracking-widest rounded-full">${nova.category}</span>
-        <span class="text-white/40 text-sm font-medium">${nova.date}</span>
+        <span class="text-gray-500 text-sm font-medium">${nova.date}</span>
       </div>
-      <h2 class="text-3xl md:text-5xl font-display font-bold mb-6 text-white leading-tight">${nova.title}</h2>
+      <h2 class="text-3xl md:text-5xl font-display font-bold mb-6 text-gray-900 leading-tight">${nova.title}</h2>
       <div class="w-20 h-1 bg-brand-red mb-8"></div>
-      <div class="text-white/70 text-base md:text-lg leading-relaxed space-y-6">
+      <div class="text-gray-600 text-base md:text-lg leading-relaxed space-y-6">
         ${nova.content.split('\n\n').map(p => `<p>${p}</p>`).join('')}
       </div>
     </div>

@@ -1,7 +1,7 @@
 export function renderDisciplines() {
   const section = document.createElement('section')
   section.id = 'disciplinas'
-  section.className = 'py-32 bg-brand-dark relative overflow-hidden'
+  section.className = 'py-32 bg-white relative overflow-hidden text-gray-800 font-sans'
 
   const disciplines = [
     {
@@ -25,38 +25,39 @@ export function renderDisciplines() {
   ]
 
   section.innerHTML = `
-    <div class="container mx-auto px-6">
+    <div class="container mx-auto px-6 max-w-7xl">
       <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-        <div class="max-w-2xl">
-          <h2 class="text-brand-red font-bold tracking-widest uppercase mb-4">As nosas especialidades</h2>
-          <p class="text-5xl md:text-6xl font-display font-bold leading-tight">DOMINA A AUGA EN <br/>CALQUERA FORMA</p>
+        <div class="max-w-2xl space-y-2">
+          <span class="text-[10px] font-black text-brand-red uppercase tracking-widest">As nosas especialidades</span>
+          <h2 class="text-4xl md:text-5xl font-display font-black leading-tight text-gray-900">Especialidades Deportivas</h2>
         </div>
-        <p class="text-white/50 max-w-sm text-lg">
+        <p class="text-gray-500 max-w-sm text-sm sm:text-base font-semibold leading-relaxed">
           Contamos con seccións especializadas para cada nivel, desde iniciación ata alto rendemento.
         </p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         ${disciplines.map(d => `
-          <div class="group relative h-[500px] rounded-3xl overflow-hidden border border-white/5 hover:border-brand-red/50 transition-all duration-500">
+          <div class="group relative h-[480px] rounded-3xl overflow-hidden border border-gray-200 hover:shadow-xl hover:border-brand-red/30 transition-all duration-300">
             <!-- Image Background -->
             <div class="absolute inset-0 z-0">
-              <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/40 to-transparent z-10"></div>
-              <img src="${d.img}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" alt="${d.title}" />
+              <div class="absolute inset-0 bg-gradient-to-t from-white via-white/30 to-transparent z-10"></div>
+              <img src="${d.img}" class="w-full h-full object-cover opacity-90 transition-all duration-700" alt="${d.title}" />
             </div>
             
             <!-- Content -->
             <div class="absolute inset-0 z-20 p-8 flex flex-col justify-end">
-              <div class="w-12 h-12 rounded-2xl bg-brand-red flex items-center justify-center mb-6 shadow-lg shadow-brand-red/40 group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${d.icon}"></path>
+              <div class="w-10 h-10 rounded-xl bg-brand-red flex items-center justify-center mb-6 shadow-md shadow-brand-red/30">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="${d.icon}"></path>
                 </svg>
               </div>
-              <h3 class="text-3xl font-display font-bold mb-4">${d.title}</h3>
-              <p class="text-white/60 mb-6 group-hover:text-white/90 transition-colors">${d.desc}</p>
-              <a href="#" class="inline-flex items-center gap-2 font-bold text-brand-red hover:text-white transition-colors">
-                Máis información 
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+              <span class="text-[9px] font-black text-brand-red uppercase tracking-widest">Modalidade</span>
+              <h3 class="text-2xl font-display font-black text-gray-900 mt-0.5 mb-2">${d.title}</h3>
+              <p class="text-gray-500 text-xs sm:text-sm font-semibold mb-4 leading-relaxed">${d.desc}</p>
+              <a href="#" class="inline-flex items-center gap-1.5 font-bold text-brand-red hover:text-red-700 transition-colors text-xs uppercase tracking-wider">
+                Ler máis 
+                <svg class="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
               </a>
             </div>
           </div>

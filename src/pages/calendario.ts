@@ -113,7 +113,7 @@ function parseAndFormatDate(dateStr: string): { day: string; month: string; year
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const main = document.createElement('main')
-main.className = 'pt-32 pb-24 min-h-screen bg-brand-dark relative'
+main.className = 'pt-32 pb-24 min-h-screen bg-white text-gray-800 relative'
 
 let events: EventItem[] = []
 
@@ -141,61 +141,72 @@ async function init() {
 
 function renderPage() {
   main.innerHTML = `
-    <div class="absolute inset-0 bg-brand-dark/20 z-0"></div>
+    <!-- Decorative background patterns -->
+    <div class="absolute inset-0 bg-gray-50/30 z-0 grid-overlay"></div>
     
-    <div class="container mx-auto px-6 relative z-10">
-      <div class="max-w-4xl mx-auto">
-        <div class="text-center mb-16">
-          <h1 class="text-5xl md:text-7xl font-display font-bold mb-6 uppercase tracking-tighter italic">
-            O Noso <span class="text-brand-red">Calendario</span>
-          </h1>
-          <p class="text-white/60 text-lg max-w-2xl mx-auto">
-            Consulta as vindeiras regatas, competicións e eventos do Club Piragüismo Rianxo para a tempada 2026.
-          </p>
-        </div>
-   
-        <div class="space-y-6">
-          ${events.map(event => {
-            const { day, month, year } = parseAndFormatDate(event.date);
-            return `
-              <div class="glass-card p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-brand-red/30 transition-colors group cursor-default">
+    <div class="container mx-auto px-6 relative z-10 max-w-5xl">
+      <!-- Section Heading component -->
+      <div class="text-center max-w-2xl mx-auto mb-20 space-y-4">
+        <span class="text-[10px] font-black text-brand-red uppercase tracking-widest">Tempada 2026</span>
+        <h1 class="text-4xl md:text-6xl font-display font-black tracking-tight text-gray-900 uppercase">
+          Calendario Oficial
+        </h1>
+        <p class="text-gray-500 text-sm sm:text-base leading-relaxed font-semibold">
+          Consulta as vindeiras regatas, competicións e eventos do Club Piragüismo Rianxo.
+        </p>
+      </div>
+ 
+      <div class="relative timeline-line pl-10 md:pl-12 space-y-12">
+        ${events.map(event => {
+          const { day, month, year } = parseAndFormatDate(event.date);
+          return `
+            <div class="relative group">
+              <!-- Timeline indicator dot -->
+              <span class="absolute -left-[45px] top-6 w-8 h-8 rounded-full bg-white border-2 border-brand-red flex items-center justify-center shadow-md z-10">
+                <span class="w-2.5 h-2.5 rounded-full bg-brand-red"></span>
+              </span>
+              
+              <!-- Event Timeline Card -->
+              <div class="bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-lg hover:border-brand-red/35 transition-all duration-300">
                 
-                <div class="flex items-start md:items-center gap-6 md:gap-8 flex-1">
-                  <!-- Date Badge -->
-                  <div class="w-24 h-24 shrink-0 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center group-hover:bg-brand-red/10 group-hover:border-brand-red/30 transition-colors">
-                    <span class="text-3xl font-display font-bold text-white group-hover:text-brand-red transition-colors leading-none">${day}</span>
-                    ${month ? `<span class="text-xs font-bold text-white/50 uppercase tracking-widest mt-1">${month}</span>` : ''}
-                    ${year ? `<span class="text-[10px] text-white/30">${year}</span>` : ''}
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6 flex-1">
+                  <!-- Date block -->
+                  <div class="px-5 py-3 rounded-2xl bg-gray-50 border border-gray-150 text-center shrink-0 min-w-[90px]">
+                    <p class="text-3xl font-display font-black text-gray-900 leading-none">${day}</p>
+                    <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1.5">${month || ''}</p>
+                    <p class="text-[9px] font-bold text-gray-400 mt-0.5">${year || ''}</p>
                   </div>
                   
-                  <!-- Event Info -->
-                  <div>
-                    <div class="flex flex-wrap items-center gap-3 mb-2">
-                      <span class="px-3 py-1 rounded-full bg-white/10 text-[10px] font-bold uppercase tracking-widest text-white/70">${event.type}</span>
+                  <!-- Info block -->
+                  <div class="space-y-2">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="px-2.5 py-0.5 rounded-full bg-brand-red/5 border border-brand-red/10 text-[9px] font-black uppercase tracking-widest text-brand-red">${event.type}</span>
                       ${event.status === 'Confirmado' 
-                        ? `<span class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-green-400"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span> Confirmado</span>`
-                        : `<span class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-orange-400"><span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span> Pendente</span>`
+                        ? `<span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-green-600"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Confirmado</span>`
+                        : `<span class="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-orange-600"><span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span> Pendente</span>`
                       }
                     </div>
-                    <h3 class="text-2xl md:text-3xl font-display font-bold mb-2 group-hover:text-brand-red transition-colors">${event.title}</h3>
-                    <p class="text-white/50 flex items-center gap-2 text-sm">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <h3 class="text-xl sm:text-2xl font-display font-black text-gray-950">${event.title}</h3>
+                    <p class="text-gray-500 flex items-center gap-1.5 text-xs sm:text-sm font-semibold">
+                      <svg class="w-4 h-4 text-brand-red shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                       ${event.location}
                     </p>
                   </div>
                 </div>
                 
-                <!-- Action Button -->
-                <button class="w-full md:w-auto px-6 py-3 rounded-full border border-white/20 text-white text-sm font-bold hover:bg-brand-red hover:border-brand-red transition-colors whitespace-nowrap">
-                  Máis info
-                </button>
+                <!-- CTA Action Button -->
+                <div class="shrink-0 w-full md:w-auto">
+                  <button class="w-full md:w-auto px-6 py-3.5 rounded-xl border border-gray-250 text-gray-700 text-xs font-black uppercase tracking-widest hover:bg-brand-red hover:border-brand-red hover:text-white transition-all duration-300 cursor-pointer shadow-sm">
+                    Máis info
+                  </button>
+                </div>
     
               </div>
-            `;
-          }).join('')}
-        </div>
-   
+            </div>
+          `;
+        }).join('')}
       </div>
+   
     </div>
   `
 }

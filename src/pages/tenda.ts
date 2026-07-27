@@ -75,33 +75,33 @@ const app = document.querySelector<HTMLDivElement>('#app')!
 app.appendChild(renderNavigation())
 
 const main = document.createElement('main')
-main.className = 'pt-32 pb-24 bg-brand-dark min-h-screen relative'
+main.className = 'pt-32 pb-24 bg-white min-h-screen relative text-gray-800'
 
 // Main Layout Containers
 const shopContainer = document.createElement('div')
 shopContainer.className = 'container mx-auto px-6 transition-all duration-300'
 
 const cartDrawer = document.createElement('div')
-cartDrawer.className = 'fixed top-0 right-0 h-full w-full sm:w-[450px] bg-[#0a0a0a] border-l border-white/5 transform translate-x-full transition-transform duration-500 z-50 flex flex-col'
+cartDrawer.className = 'fixed top-0 right-0 h-full w-full sm:w-[450px] bg-white border-l border-gray-200 shadow-2xl transform translate-x-full transition-transform duration-500 z-50 flex flex-col text-gray-800'
 
 const quickViewOverlay = document.createElement('div')
-quickViewOverlay.className = 'fixed inset-0 bg-black/90 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-6'
+quickViewOverlay.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-6'
 quickViewOverlay.id = 'quick-view-overlay'
 
 const checkoutOverlay = document.createElement('div')
-checkoutOverlay.className = 'fixed inset-0 bg-black/90 z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-6'
+checkoutOverlay.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 p-6'
 checkoutOverlay.id = 'checkout-overlay'
 
 // Overlay for cart background
 const overlay = document.createElement('div')
-overlay.className = 'fixed inset-0 bg-black/80 z-40 hidden transition-opacity duration-500 opacity-0'
+overlay.className = 'fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden transition-opacity duration-500 opacity-0'
 overlay.onclick = toggleCart
 
 // Floating Mobile Cart
 const floatingCart = document.createElement('div')
 floatingCart.className = 'fixed bottom-6 right-6 z-40 hidden lg:hidden transition-all duration-300 translate-y-20 opacity-0'
 floatingCart.innerHTML = `
-  <button onclick="window.toggleCart()" class="w-16 h-16 rounded-full bg-brand-red text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-transform relative">
+  <button onclick="window.toggleCart()" class="w-16 h-16 rounded-full bg-brand-red text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-transform relative cursor-pointer">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
     <span id="floating-cart-count" class="absolute -top-1 -right-1 bg-white text-brand-red text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-brand-red">0</span>
   </button>
@@ -116,78 +116,82 @@ function renderShop() {
 
   shopContainer.innerHTML = `
     <!-- Header -->
-    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 mb-12">
-      <div>
-        <h1 class="text-5xl md:text-7xl font-display font-bold mb-4 uppercase tracking-tighter italic">Tenda <span class="text-brand-red">Oficial</span></h1>
-        <p class="text-white/50 text-lg max-w-xl">Leva as cores do Club de Piragüismo Rianxo alá onde vaias. Equipamento técnico de alta calidade e merchandising oficial.</p>
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 mb-16 font-sans">
+      <div class="space-y-2">
+        <span class="text-[10px] font-black text-brand-red uppercase tracking-widest">Equipamento Oficial</span>
+        <h1 class="text-4xl md:text-6xl font-display font-black tracking-tight text-gray-900 uppercase">Tenda do Club</h1>
+        <p class="text-gray-500 text-xs sm:text-sm font-semibold max-w-xl">Leva as cores do Club de Piragüismo Rianxo alá onde vaias. Equipamento técnico e merchandising oficial.</p>
       </div>
       
       <div class="relative group shrink-0 w-full lg:w-auto flex justify-end">
-        <button id="cart-toggle-btn" class="w-full lg:w-auto px-8 py-4 rounded-full bg-brand-red text-white font-bold tracking-widest uppercase hover:bg-red-700 transition-colors flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(220,38,38,0.3)]">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-          Carrito
-          <span id="cart-count" class="ml-1 px-2.5 py-0.5 bg-white text-brand-red text-xs font-black rounded-full flex items-center justify-center min-w-[20px] h-[20px] transition-transform duration-300">${cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
+        <button id="cart-toggle-btn" class="w-full lg:w-auto px-6 py-4 rounded-xl bg-brand-red text-white font-bold tracking-widest uppercase hover:bg-red-700 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer text-xs">
+          <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+          Ver Carriño
+          <span id="cart-count" class="ml-1.5 px-2.5 py-0.5 bg-white text-brand-red text-[10px] font-black rounded-full flex items-center justify-center min-w-[20px] h-[20px] transition-transform duration-300 border border-brand-red">${cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
         </button>
       </div>
     </div>
 
     <!-- Filters -->
-    <div class="flex overflow-x-auto gap-2 pb-6 mb-6 scrollbar-hide">
+    <div class="flex overflow-x-auto gap-2 pb-6 mb-10 scrollbar-hide font-sans">
       ${categories.map(cat => `
-        <button onclick="window.setCategory('${cat}')" class="px-6 py-2 rounded-full border ${activeCategory === cat ? 'bg-brand-red border-brand-red text-white font-bold shadow-lg shadow-brand-red/20' : 'border-white/10 text-white/50 hover:bg-white/5 hover:text-white'} transition-all whitespace-nowrap text-sm">
+        <button onclick="window.setCategory('${cat}')" class="px-5 py-2.5 rounded-xl border ${activeCategory === cat ? 'bg-brand-red border-brand-red text-white font-bold shadow-md shadow-brand-red/15' : 'border-gray-250 text-gray-500 hover:bg-gray-50 hover:text-gray-900'} transition-all whitespace-nowrap text-xs font-bold uppercase tracking-wider cursor-pointer">
           ${cat}
         </button>
       `).join('')}
     </div>
 
-    <!-- Product Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-32" id="product-grid">
+    <!-- Product Grid / ProductCard -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-32 font-sans" id="product-grid">
       ${filteredProducts.length === 0 ? `
         <div class="col-span-full py-20 text-center">
-          <p class="text-white/30 text-lg">Non hai produtos nesta categoría.</p>
+          <p class="text-gray-400 text-sm">Non hai produtos nesta categoría.</p>
         </div>
       ` : filteredProducts.map(product => `
-        <div class="group cursor-pointer" onclick="window.handleProductClick(${product.id})">
-          <div class="relative aspect-[4/5] bg-brand-grey rounded-3xl overflow-hidden border border-white/5 mb-6">
-            <img src="${product.image}" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" alt="${product.name}" />
+        <div class="group cursor-pointer flex flex-col justify-between" onclick="window.handleProductClick(${product.id})">
+          <div class="relative aspect-[4/5] bg-gray-50 rounded-3xl overflow-hidden border border-gray-200 mb-4 transition-all duration-300 hover:shadow-md hover:border-brand-red/30">
+            <img src="${product.image}" loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="${product.name}" />
             
             ${product.tag ? `
-              <div class="absolute top-6 left-6 px-4 py-1.5 bg-brand-red text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg">
+              <div class="absolute top-4 left-4 px-3 py-1 bg-brand-red text-white text-[9px] font-black uppercase tracking-widest rounded-lg shadow-sm">
                 ${product.tag}
               </div>
             ` : ''}
             
             <!-- Hover Action -->
-            <div class="absolute inset-x-4 bottom-4 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 z-20">
-               <button class="w-full py-4 rounded-2xl bg-brand-dark border border-white/20 text-white font-bold uppercase tracking-widest text-xs flex items-center justify-center gap-2 hover:bg-brand-red hover:border-brand-red transition-colors">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <div class="absolute inset-x-4 bottom-4 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-20">
+               <button class="w-full py-3.5 rounded-xl bg-white border border-gray-200 text-gray-800 font-bold uppercase tracking-wider text-[10px] flex items-center justify-center gap-1.5 hover:bg-brand-red hover:border-brand-red hover:text-white transition-colors cursor-pointer shadow-md">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
                   Engadir - ${product.priceStr}
                </button>
             </div>
-            <!-- Dark gradient over bottom for text readability -->
-            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+            <!-- Gradient overlay for text readability -->
+            <div class="absolute inset-0 bg-gradient-to-t from-white/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
           </div>
-          <p class="text-brand-red text-[10px] font-bold uppercase tracking-widest mb-2">${product.category}</p>
-          <h3 class="text-xl font-display font-bold leading-tight mb-2 group-hover:text-brand-red transition-colors">${product.name}</h3>
-          <p class="text-white/70 font-bold text-lg">${product.priceStr}</p>
+          <div>
+            <span class="text-brand-red text-[9px] font-black uppercase tracking-widest block mb-1">${product.category}</span>
+            <h3 class="text-lg font-display font-black leading-tight text-gray-900 group-hover:text-brand-red transition-colors mb-1.5 line-clamp-1">${product.name}</h3>
+            <p class="text-gray-950 font-bold text-sm">${product.priceStr}</p>
+          </div>
         </div>
       `).join('')}
     </div>
 
     <!-- Promotional Section -->
-    <div class="relative rounded-[2rem] md:rounded-[3rem] overflow-hidden p-8 md:p-20 border border-white/5 bg-gradient-to-br from-brand-red/10 to-transparent">
+    <div class="relative rounded-3xl overflow-hidden p-8 md:p-16 border border-gray-200 bg-gray-50/50 shadow-sm font-sans">
       <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div>
-          <h2 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6 italic uppercase tracking-tighter">Únete á <span class="text-brand-red">Marea Vermella</span></h2>
-          <p class="text-white/70 text-lg mb-10 max-w-lg">Disfruta de descontos exclusivos en toda a tenda se es socio do club ou palista federado.</p>
-          <div class="flex flex-col sm:flex-row gap-4 w-full">
-             <button class="btn-primary px-10 w-full sm:w-auto">Quero ser socio</button>
-             <button class="px-8 py-3 rounded-full border border-white/20 text-white font-bold hover:bg-white/5 transition-all w-full sm:w-auto text-center">Saber máis</button>
+        <div class="space-y-6">
+          <span class="text-[10px] font-black text-brand-red uppercase tracking-widest">Colabora co club</span>
+          <h2 class="text-3xl md:text-5xl font-display font-black tracking-tight text-gray-900 leading-none">FASTE SOCIO</h2>
+          <p class="text-gray-500 text-sm sm:text-base leading-relaxed font-semibold max-w-md">Disfruta de descontos exclusivos en toda a tenda se es socio do club ou palista federado.</p>
+          <div class="flex flex-col sm:flex-row gap-3">
+             <button class="btn-primary px-8 py-3.5 text-xs font-bold uppercase tracking-widest cursor-pointer shadow-md">Quero ser socio</button>
+             <button class="px-8 py-3.5 rounded-xl border border-gray-200 text-gray-700 text-xs font-bold uppercase tracking-widest hover:bg-gray-100 transition-all cursor-pointer">Saber máis</button>
           </div>
         </div>
         <div class="flex justify-center lg:justify-end">
-           <div class="glass-card p-4 rotate-6 hover:rotate-0 transition-transform duration-700">
-              <img src="/images/products/shirt.png" loading="lazy" decoding="async" class="w-64 md:w-80 rounded-2xl" alt="Promo" />
+           <div class="bg-white border border-gray-150 p-4 shadow-xl rounded-3xl animate-slow-zoom">
+              <img src="/images/products/shirt.png" loading="lazy" decoding="async" class="w-56 md:w-72 rounded-2xl" alt="Promo" />
            </div>
         </div>
       </div>
@@ -205,41 +209,44 @@ function renderCartDrawer() {
   
   cartDrawer.innerHTML = `
     <!-- Cart Header -->
-    <div class="p-8 border-b border-white/5 flex justify-between items-center bg-[#0a0a0a]">
-      <h2 class="text-2xl font-display font-bold tracking-tight uppercase italic">O Teu <span class="text-brand-red">Carrito</span></h2>
-      <button onclick="window.toggleCart()" class="p-2 hover:bg-white/5 rounded-full transition-colors text-white/50 hover:text-white">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    <div class="p-6 border-b border-gray-150 flex justify-between items-center bg-white text-gray-800 font-sans">
+      <div class="flex flex-col">
+        <span class="text-[9px] font-black text-brand-red uppercase tracking-widest">A túa compra</span>
+        <h2 class="text-xl font-display font-black text-gray-900 uppercase mt-0.5">Carriño de Compra</h2>
+      </div>
+      <button onclick="window.toggleCart()" class="p-2 hover:bg-gray-50 rounded-xl border border-gray-150 transition-colors text-gray-400 hover:text-gray-850 cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
       </button>
     </div>
 
     <!-- Cart Items -->
-    <div class="flex-1 overflow-y-auto p-8 space-y-6 scrollbar-hide">
+    <div class="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-hide font-sans">
       ${cart.length === 0 ? `
-        <div class="h-full flex flex-col items-center justify-center text-white/30 space-y-6">
-          <div class="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center">
-             <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+        <div class="h-full flex flex-col items-center justify-center text-gray-400 space-y-6">
+          <div class="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center border border-gray-150">
+             <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
           </div>
-          <p class="font-bold uppercase tracking-widest text-sm">O teu carrito está baleiro</p>
-          <button onclick="window.toggleCart()" class="px-6 py-2 rounded-full border border-white/10 hover:border-brand-red hover:text-brand-red transition-colors text-xs font-bold uppercase tracking-widest">Seguir mercando</button>
+          <p class="font-bold uppercase tracking-widest text-[10px] text-gray-500">O teu carriño está baleiro</p>
+          <button onclick="window.toggleCart()" class="px-5 py-2.5 rounded-xl border border-gray-250 hover:border-brand-red hover:text-brand-red transition-all text-[10px] font-black uppercase tracking-wider cursor-pointer">Seguir mercando</button>
         </div>
       ` : cart.map((item, index) => `
-        <div class="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors group">
-          <img src="${item.product.image}" loading="lazy" decoding="async" class="w-20 h-24 object-cover rounded-xl bg-brand-dark" alt="${item.product.name}" />
+        <div class="flex gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-200 hover:shadow-sm transition-all group">
+          <img src="${item.product.image}" loading="lazy" decoding="async" class="w-16 h-20 object-cover rounded-xl bg-white border border-gray-150" alt="${item.product.name}" />
           <div class="flex-1 flex flex-col justify-between">
-            <div>
+            <div class="space-y-1">
               <div class="flex justify-between items-start gap-2">
-                <h4 class="font-bold text-sm leading-tight group-hover:text-brand-red transition-colors">${item.product.name}</h4>
-                <button onclick="window.removeFromCart(${index})" class="text-white/30 hover:text-brand-red transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                <h4 class="font-bold text-xs text-gray-800 group-hover:text-brand-red transition-colors line-clamp-2 leading-tight">${item.product.name}</h4>
+                <button onclick="window.removeFromCart(${index})" class="text-gray-400 hover:text-brand-red transition-colors cursor-pointer shrink-0">
+                  <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 </button>
               </div>
-              ${item.size ? `<p class="text-xs text-white/40 mt-1 uppercase tracking-widest">Talla: <span class="text-white font-bold">${item.size}</span></p>` : ''}
-              <p class="text-white font-bold mt-2">${item.product.priceStr}</p>
+              ${item.size ? `<p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Talla: <span class="text-gray-700 font-black">${item.size}</span></p>` : ''}
+              <p class="text-gray-800 font-bold text-xs">${item.product.priceStr}</p>
             </div>
-            <div class="flex items-center gap-3 mt-2">
-              <button onclick="window.updateQuantity(${index}, -1)" class="w-8 h-8 rounded-full bg-black/50 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">-</button>
-              <span class="font-bold w-4 text-center text-sm">${item.quantity}</span>
-              <button onclick="window.updateQuantity(${index}, 1)" class="w-8 h-8 rounded-full bg-black/50 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">+</button>
+            <div class="flex items-center gap-2 mt-2">
+              <button onclick="window.updateQuantity(${index}, -1)" class="w-6 h-6 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors text-gray-850 cursor-pointer text-xs font-bold">-</button>
+              <span class="font-bold w-6 text-center text-xs text-gray-850">${item.quantity}</span>
+              <button onclick="window.updateQuantity(${index}, 1)" class="w-6 h-6 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors text-gray-850 cursor-pointer text-xs font-bold">+</button>
             </div>
           </div>
         </div>
@@ -248,16 +255,15 @@ function renderCartDrawer() {
 
     <!-- Cart Footer -->
     ${cart.length > 0 ? `
-      <div class="p-8 border-t border-white/5 bg-[#0a0a0a]">
+      <div class="p-6 border-t border-gray-150 bg-white font-sans">
         <div class="flex justify-between items-center mb-6">
-          <span class="text-white/50 font-bold uppercase tracking-widest text-sm">Total</span>
-          <span class="text-3xl font-display font-bold text-brand-red">${total.toFixed(2)}€</span>
+          <span class="text-gray-400 font-black uppercase tracking-widest text-[10px]">Total</span>
+          <span class="text-2xl font-display font-black text-brand-red leading-none">${total.toFixed(2)}€</span>
         </div>
-        <button onclick="window.checkout()" class="w-full py-4 rounded-xl bg-brand-red text-white font-bold hover:bg-red-700 transition-all transform hover:scale-[1.02] active:scale-[0.98] uppercase tracking-widest flex items-center justify-center gap-2">
-          Realizar Pedido
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        <button onclick="window.checkout()" class="w-full py-4 rounded-xl bg-brand-red text-white font-bold hover:bg-red-700 transition-all uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 cursor-pointer shadow-md">
+          Finalizar Pedido
+          <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
         </button>
-        <p class="text-white/30 text-xs text-center mt-4">O pedido xestionarase a través de correo electrónico.</p>
       </div>
     ` : ''}
   `
@@ -272,29 +278,29 @@ function renderQuickView(productId: number) {
   let selectedSize = 'M' // Default
 
   quickViewOverlay.innerHTML = `
-    <div class="w-full max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col md:flex-row bg-brand-grey border border-white/5 rounded-2xl relative" id="quick-view-modal">
-      <button onclick="window.closeQuickView()" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/80 text-white flex items-center justify-center hover:bg-brand-red transition-colors">
+    <div class="w-full max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col md:flex-row bg-white border border-gray-250 rounded-2xl relative shadow-2xl text-gray-800 animate-fade-in-up" id="quick-view-modal">
+      <button onclick="window.closeQuickView()" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white text-gray-800 flex items-center justify-center hover:bg-brand-red hover:text-white transition-colors border border-gray-200 shadow-md cursor-pointer">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
       </button>
       
-      <div class="w-full md:w-1/2 bg-gradient-to-b from-brand-grey to-brand-dark p-8 flex items-center justify-center">
-         <img src="${product.image}" loading="lazy" decoding="async" class="w-3/4 object-contain animate-fade-in-up" alt="${product.name}" />
+      <div class="w-full md:w-1/2 bg-gradient-to-b from-gray-50 to-white p-8 flex items-center justify-center border-r border-gray-100">
+         <img src="${product.image}" loading="lazy" decoding="async" class="w-3/4 object-contain" alt="${product.name}" />
       </div>
       
-      <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+      <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white">
          <p class="text-brand-red font-bold uppercase tracking-widest text-xs mb-2">${product.category}</p>
-         <h2 class="text-3xl md:text-4xl font-display font-bold mb-4">${product.name}</h2>
-         <p class="text-2xl text-white/80 font-bold mb-8">${product.priceStr}</p>
+         <h2 class="text-3xl md:text-4xl font-display font-bold mb-4 text-gray-900">${product.name}</h2>
+         <p class="text-2xl text-gray-800 font-bold mb-8">${product.priceStr}</p>
          
          <div class="mb-8">
             <div class="flex justify-between items-center mb-4">
-              <span class="text-sm font-bold text-white/50 uppercase tracking-widest">Selecciona Talla</span>
+              <span class="text-sm font-bold text-gray-500 uppercase tracking-widest">Selecciona Talla</span>
               <a href="#" class="text-xs text-brand-red underline">Guía de tallas</a>
             </div>
             <p class="text-[10px] font-bold text-brand-red uppercase tracking-widest mb-2">Infantil</p>
             <div class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-8 gap-2 mb-6">
                ${kidsSizes.map(size => `
-                  <button class="size-btn py-2 text-sm rounded-xl border ${size === selectedSize ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-white/10 text-white hover:border-white/30'} font-bold transition-colors" data-size="${size}">
+                  <button class="size-btn py-2 text-sm rounded-xl border ${size === selectedSize ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-gray-200 text-gray-700 hover:border-gray-400'} font-bold transition-colors cursor-pointer" data-size="${size}">
                     ${size}
                   </button>
                `).join('')}
@@ -303,14 +309,14 @@ function renderQuickView(productId: number) {
             <p class="text-[10px] font-bold text-brand-red uppercase tracking-widest mb-2">Adulto</p>
             <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
                ${adultSizes.map(size => `
-                  <button class="size-btn py-3 rounded-xl border ${size === selectedSize ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-white/10 text-white hover:border-white/30'} font-bold transition-colors" data-size="${size}">
+                  <button class="size-btn py-3 rounded-xl border ${size === selectedSize ? 'border-brand-red text-brand-red bg-brand-red/10' : 'border-gray-200 text-gray-700 hover:border-gray-400'} font-bold transition-colors cursor-pointer" data-size="${size}">
                     ${size}
                   </button>
                `).join('')}
             </div>
          </div>
          
-         <button onclick="window.addToCartWithSize(${product.id})" class="btn-primary w-full py-4 flex items-center justify-center gap-2">
+         <button onclick="window.addToCartWithSize(${product.id})" class="btn-primary w-full py-4 flex items-center justify-center gap-2 cursor-pointer">
             Engadir ao carrito
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
          </button>
@@ -327,11 +333,11 @@ function renderQuickView(productId: number) {
         // Reset all
         btns.forEach(b => {
           b.classList.remove('border-brand-red', 'text-brand-red', 'bg-brand-red/10')
-          b.classList.add('border-white/10', 'text-white')
+          b.classList.add('border-gray-200', 'text-gray-700')
         })
         // Set active
         target.classList.add('border-brand-red', 'text-brand-red', 'bg-brand-red/10')
-        target.classList.remove('border-white/10', 'text-white')
+        target.classList.remove('border-gray-200', 'text-gray-700')
         
         // Save selected size globally for the add function
         window.currentSelectedSize = target.dataset.size || 'M'
@@ -434,53 +440,70 @@ function closeCheckout() {
 function renderCheckoutModal() {
   const total = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
   checkoutOverlay.innerHTML = `
-    <div class="w-full max-w-lg bg-brand-grey border border-white/10 rounded-2xl relative max-h-[90vh] overflow-y-auto p-8 animate-fade-in-up" id="checkout-modal">
-      <button onclick="window.closeCheckout()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-black/80 text-white flex items-center justify-center hover:bg-brand-red transition-colors border border-white/10 z-10">
+    <div class="w-full max-w-lg bg-white border border-gray-250 rounded-2xl relative max-h-[90vh] overflow-y-auto p-8 animate-fade-in-up shadow-2xl text-gray-800" id="checkout-modal">
+      <button onclick="window.closeCheckout()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-white text-gray-800 flex items-center justify-center hover:bg-brand-red hover:text-white transition-colors border border-gray-200 shadow-sm cursor-pointer">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
       </button>
-      <h3 class="text-2xl font-display font-bold uppercase tracking-tight italic mb-6">
+      <h3 class="text-2xl font-display font-bold uppercase tracking-tight text-gray-900 mb-6">
         Finalizar <span class="text-brand-red">Pedido</span>
       </h3>
       
-      <div class="mb-6 p-4 bg-brand-dark/50 border border-white/5 rounded-xl">
-        <p class="text-xs font-bold text-white/40 uppercase mb-2">Resumo de Compra</p>
+      <div class="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-xl">
+        <p class="text-xs font-bold text-gray-500 uppercase mb-2">Resumo de Compra</p>
         <div class="max-h-32 overflow-y-auto space-y-2 pr-2 scrollbar-hide">
           ${cart.map(item => {
             const sizeStr = item.size ? ` (${item.size})` : ''
             return `
-              <div class="flex justify-between text-xs text-white/70">
+              <div class="flex justify-between text-xs text-gray-650">
                 <span>${item.quantity}x ${item.product.name}${sizeStr}</span>
-                <span class="font-bold text-white">${(item.product.price * item.quantity).toFixed(2)}€</span>
+                <span class="font-bold text-gray-800">${(item.product.price * item.quantity).toFixed(2)}€</span>
               </div>
             `
           }).join('')}
         </div>
-        <div class="flex justify-between items-center border-t border-white/5 mt-4 pt-3">
-          <span class="text-sm font-bold text-white/80 uppercase">Total:</span>
+        <div class="flex justify-between items-center border-t border-gray-200 mt-4 pt-3">
+          <span class="text-sm font-bold text-gray-700 uppercase">Total:</span>
           <span class="text-xl font-display font-bold text-brand-red">${total.toFixed(2)}€</span>
         </div>
       </div>
 
       <form id="checkout-form" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-white/40 uppercase mb-2">Nome Completo</label>
-          <input type="text" id="buyer-name" required class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" placeholder="O teu nome e apelidos" />
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nome Completo</label>
+          <input type="text" id="buyer-name" required class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-brand-red transition-all" placeholder="O teu nome e apelidos" />
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-bold text-white/40 uppercase mb-2">Correo Electrónico</label>
-            <input type="email" id="buyer-email" required class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" placeholder="ti@email.com" />
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Correo Electrónico</label>
+            <input type="email" id="buyer-email" required class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-brand-red transition-all" placeholder="ti@email.com" />
           </div>
           <div>
-            <label class="block text-xs font-bold text-white/40 uppercase mb-2">Teléfono de Contacto</label>
-            <input type="tel" id="buyer-phone" required class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" placeholder="600 000 000" />
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Teléfono de Contacto</label>
+            <input type="tel" id="buyer-phone" required class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-brand-red transition-all" placeholder="600 000 000" />
           </div>
         </div>
         <div>
-          <label class="block text-xs font-bold text-white/40 uppercase mb-2">Observacións / Indicacións de envío (Opcional)</label>
-          <textarea id="buyer-notes" class="w-full bg-brand-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all h-20 resize-none" placeholder="Ex: Talla infantil ou indicaciones para entrega..."></textarea>
+          <label class="block text-xs font-bold text-gray-550 uppercase mb-2">Observacións / Indicacións de envío (Opcional)</label>
+          <textarea id="buyer-notes" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-brand-red transition-all h-20 resize-none" placeholder="Ex: Talla infantil ou indicaciones para entrega..."></textarea>
         </div>
-        <button type="submit" class="btn-primary w-full py-4 text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2">
+
+        <!-- GDPR Compliance Checkboxes -->
+        <div class="space-y-3 pt-2 text-xs font-semibold text-gray-500">
+          <div class="flex items-start gap-2.5">
+            <input type="checkbox" id="checkout-privacy-check" required class="w-4 h-4 text-brand-red rounded border-gray-300 focus:ring-brand-red cursor-pointer mt-0.5" />
+            <label for="checkout-privacy-check" class="cursor-pointer select-none leading-relaxed">
+              Lin e acepto a <a href="/politica-privacidade" target="_blank" class="text-brand-red hover:underline font-bold">Política de Privacidade</a>.
+            </label>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <input type="checkbox" id="checkout-commercial-check" class="w-4 h-4 text-brand-red rounded border-gray-300 focus:ring-brand-red cursor-pointer mt-0.5" />
+            <label for="checkout-commercial-check" class="cursor-pointer select-none leading-relaxed">
+              Acepto recibir información sobre actividades e novidades do club.
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary w-full py-4 text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2 cursor-pointer shadow-md">
           Confirmar Pedido
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
         </button>
@@ -492,6 +515,14 @@ function renderCheckoutModal() {
     const form = document.getElementById('checkout-form') as HTMLFormElement
     form?.addEventListener('submit', (e) => {
       e.preventDefault()
+      const privacyCheck = document.getElementById('checkout-privacy-check') as HTMLInputElement
+      const commercialCheck = document.getElementById('checkout-commercial-check') as HTMLInputElement
+
+      if (!privacyCheck.checked) {
+        alert('Debes aceptar a Política de Privacidade para realizar o pedido.')
+        return
+      }
+
       const name = (document.getElementById('buyer-name') as HTMLInputElement).value
       const emailVal = (document.getElementById('buyer-email') as HTMLInputElement).value
       const phone = (document.getElementById('buyer-phone') as HTMLInputElement).value
@@ -514,6 +545,9 @@ function renderCheckoutModal() {
         items: orderItems,
         total,
         status: 'Pendente',
+        privacyAccepted: true,
+        privacyPolicyVersion: '1.0',
+        commercialAccepted: commercialCheck.checked,
         date: new Date().toLocaleDateString('gl-ES', {
           day: '2-digit',
           month: '2-digit',
@@ -609,7 +643,7 @@ function updateCartUI() {
 // Enhanced Toast System
 function showToast(message: string) {
   const toast = document.createElement('div')
-  toast.className = 'fixed bottom-6 right-6 bg-white text-brand-dark px-6 py-4 rounded-2xl font-bold transform translate-y-20 opacity-0 transition-all duration-500 z-[100] flex items-center gap-3'
+  toast.className = 'fixed bottom-6 right-6 bg-white text-gray-800 border border-gray-200 shadow-2xl px-6 py-4 rounded-2xl font-bold transform translate-y-20 opacity-0 transition-all duration-500 z-[100] flex items-center gap-3'
   toast.innerHTML = `
     <div class="w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center shrink-0">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>

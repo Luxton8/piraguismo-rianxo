@@ -1,17 +1,51 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="gl" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Club de Piragüismo Rianxo | Deporte e Tradición</title>
-    <meta name="description" content="Sitio oficial do Club de Piragüismo Rianxo. Escola de piragüismo, competición e kaiak de mar na Ría de Arousa." />
-    <!-- Preconnect to fonts -->
+    <title>Club de Piragüismo Rianxo | Deporte e Tradición na Ría</title>
+    <meta name="description" content="Sitio oficial do Club de Piragüismo Rianxo. Escola de piragüismo, competición, kaiak e piragüismo tradicional en Rianxo, Galicia." />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Club de Piragüismo Rianxo | Deporte e Tradición" />
+    <meta property="og:description" content="Sitio oficial do Club de Piragüismo Rianxo. Escola deportiva e kaiak." />
+    <meta property="og:image" content="/logo.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="gl_ES" />
+
+    <!-- Google Fonts Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+    <!-- JSON-LD Local SEO Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SportsClub",
+      "name": "Club de Piragüismo Rianxo",
+      "image": "https://piraguismorianxo.com/logo.png",
+      "url": "https://piraguismorianxo.com",
+      "telephone": "+34610903537",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Paseo do Porto, s/n",
+        "addressLocality": "Rianxo",
+        "addressRegion": "A Coruña",
+        "postalCode": "15920",
+        "addressCountry": "ES"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 42.6465,
+        "longitude": -8.8183
+      },
+      "sport": "Kayaking"
+    }
+    </script>
   </head>
-  <body class="bg-brand-dark text-white selection:bg-brand-red selection:text-white overflow-x-hidden">
+  <body class="bg-white text-gray-900 selection:bg-brand-red selection:text-white overflow-x-hidden">
     <div id="app"></div>
     <script type="module" src="/src/pages/home.ts"></script>
   </body>
