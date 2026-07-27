@@ -35,7 +35,7 @@ export function renderSponsors() {
       <h2 class="text-3xl md:text-4xl font-display font-bold mb-4 uppercase tracking-tight text-gray-900">Patrocinadores</h2>
       <p class="text-gray-500 font-bold mb-16 uppercase tracking-wider text-xs">Grazas polo voso apoio ao <span class="text-brand-red block sm:inline mt-1 sm:mt-0">Club Piragüismo Rianxo</span></p>
       
-      <div class="grid grid-cols-2 md:grid-cols-5 gap-12 items-center justify-center">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 items-center justify-center" id="main-sponsors-grid">
         ${sponsors.map(sponsor => `
           <a href="${sponsor.url}" target="_blank" rel="noopener noreferrer" class="h-16 lg:h-24 flex items-center justify-center group cursor-pointer p-4 border border-gray-100 hover:border-gray-200 hover:shadow-md rounded-2xl bg-gray-50/50 transition-all duration-300">
             ${sponsor.logo ? `
@@ -66,12 +66,30 @@ export function renderSponsors() {
     try {
       const res = await fetch('/data/sponsors.json')
       if (res.ok) {
-        const otherSponsors = await res.json()
-        if (Array.isArray(otherSponsors) && otherSponsors.length > 0) {
-          const container = document.getElementById('other-sponsors-container')
-          const grid = document.getElementById('other-sponsors-grid')
-          if (container && grid) {
-            grid.innerHTML = otherSponsors.map(sp => `
+        const dynamicSponsors = await res.json()
+        if (Array.isArray(dynamicSponsors)) {
+          const dynamicPrincipals = dynamicSponsors.filter(sp => sp.category === 'Principal')
+          const dynamicSecondaries = dynamicSponsors.filter(sp => sp.category === 'Secundario')
+
+          // Add dynamic principals to the main grid
+          const mainGrid = document.getElementById('main-sponsors-grid')
+          if (mainGrid && dynamicPrincipals.length > 0) {
+            mainGrid.innerHTML += dynamicPrincipals.map(sp => `
+              <a href="${sp.url || '#'}" ${sp.url ? 'target="_blank" rel="noopener noreferrer"' : 'onclick="return false;"'} class="h-16 lg:h-24 flex items-center justify-center group cursor-pointer p-4 border border-gray-100 hover:border-gray-200 hover:shadow-md rounded-2xl bg-gray-50/50 transition-all duration-300">
+                ${sp.logo ? `
+                  <img src="${sp.logo}" alt="${sp.name}" loading="lazy" decoding="async" class="h-full object-contain opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500" />
+                ` : `
+                  <span class="text-xs font-display font-bold text-gray-400 group-hover:text-brand-red transition-all duration-500 uppercase tracking-wider">${sp.name}</span>
+                `}
+              </a>
+            `).join('')
+          }
+
+          // Add dynamic secondaries to the secondary grid
+          const secondaryContainer = document.getElementById('other-sponsors-container')
+          const secondaryGrid = document.getElementById('other-sponsors-grid')
+          if (secondaryContainer && secondaryGrid && dynamicSecondaries.length > 0) {
+            secondaryGrid.innerHTML = dynamicSecondaries.map(sp => `
               <a href="${sp.url || '#'}" ${sp.url ? 'target="_blank" rel="noopener noreferrer"' : 'onclick="return false;"'} class="h-14 lg:h-20 flex items-center justify-center group cursor-pointer p-3 border border-gray-100 hover:border-gray-250 rounded-xl bg-white hover:shadow-md transition-all duration-300">
                 ${sp.logo ? `
                   <img src="${sp.logo}" alt="${sp.name}" loading="lazy" decoding="async" class="h-full object-contain opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500" />
@@ -80,7 +98,7 @@ export function renderSponsors() {
                 `}
               </a>
             `).join('')
-            container.classList.remove('hidden')
+            secondaryContainer.classList.remove('hidden')
           }
         }
       }

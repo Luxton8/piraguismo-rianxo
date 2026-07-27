@@ -905,27 +905,35 @@ function renderSponsorsTab(): string {
           <div class="bg-white border border-gray-200 shadow-sm rounded-2xl py-20 text-center">
             <p class="text-gray-400 text-base font-semibold">Non hai patrocinadores adicionais aínda.</p>
           </div>
-        ` : sponsors.map((sp: any) => `
-          <div class="bg-white border border-gray-200 shadow-sm p-6 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-gray-300 transition-colors">
-            <div class="flex items-center gap-4 flex-1">
-              <div class="w-20 h-16 bg-gray-50 rounded-xl overflow-hidden shrink-0 flex items-center justify-center border border-gray-200 p-2">
-                ${sp.logo ? `<img src="${sp.logo}" class="h-full object-contain" />` : '<span class="text-[9px] text-gray-400 font-bold uppercase">Sen logo</span>'}
+        ` : sponsors.map((sp: any) => {
+          const categoryBadge = sp.category === 'Principal' 
+            ? 'bg-red-50 text-brand-red border-red-200' 
+            : 'bg-gray-100 text-gray-600 border-gray-200';
+          return `
+            <div class="bg-white border border-gray-200 shadow-sm p-6 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-gray-300 transition-colors">
+              <div class="flex items-center gap-4 flex-1">
+                <div class="w-20 h-16 bg-gray-50 rounded-xl overflow-hidden shrink-0 flex items-center justify-center border border-gray-200 p-2">
+                  ${sp.logo ? `<img src="${sp.logo}" class="h-full object-contain" />` : '<span class="text-[9px] text-gray-400 font-bold uppercase">Sen logo</span>'}
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <h4 class="font-display font-bold text-lg text-gray-900">${sp.name}</h4>
+                    <span class="px-2 py-0.5 rounded border text-[9px] font-bold uppercase tracking-wider ${categoryBadge}">${sp.category || 'Secundario'}</span>
+                  </div>
+                  <a href="${sp.url || '#'}" target="_blank" class="text-xs text-brand-red hover:underline font-semibold flex items-center gap-1 mt-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    ${sp.url || 'Sen enlace'}
+                  </a>
+                </div>
               </div>
-              <div class="flex-1">
-                <h4 class="font-display font-bold text-lg text-gray-900">${sp.name}</h4>
-                <a href="${sp.url || '#'}" target="_blank" class="text-xs text-brand-red hover:underline font-semibold flex items-center gap-1 mt-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                  ${sp.url || 'Sen enlace'}
-                </a>
+              
+              <div class="flex items-center gap-3 shrink-0">
+                <button onclick="window.openEditSponsorModal(${sp.id})" class="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-sm">Editar</button>
+                <button onclick="window.deleteSponsor(${sp.id})" class="px-4 py-2 bg-brand-red/10 border border-brand-red/20 text-brand-red hover:bg-brand-red hover:text-white rounded-lg text-xs font-bold transition-colors cursor-pointer">Eliminar</button>
               </div>
             </div>
-            
-            <div class="flex items-center gap-3 shrink-0">
-              <button onclick="window.openEditSponsorModal(${sp.id})" class="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-sm">Editar</button>
-              <button onclick="window.deleteSponsor(${sp.id})" class="px-4 py-2 bg-brand-red/10 border border-brand-red/20 text-brand-red hover:bg-brand-red hover:text-white rounded-lg text-xs font-bold transition-colors cursor-pointer">Eliminar</button>
-            </div>
-          </div>
-        `).join('')}
+          `;
+        }).join('')}
       </div>
     </div>
   `
@@ -1013,6 +1021,14 @@ function renderSponsorModalContent(sp?: any) {
       </div>
       
       <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Importancia / Categoría</label>
+        <select id="sp-category" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all">
+          <option value="Principal" ${sp?.category === 'Principal' ? 'selected' : ''}>Principal (Tamaño Grande)</option>
+          <option value="Secundario" ${sp?.category === 'Secundario' || !sp?.category ? 'selected' : ''}>Secundario (Colaborador / Tamaño Pequeno)</option>
+        </select>
+      </div>
+
+      <div>
         <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Enlace da Web (URL)</label>
         <input type="url" id="sp-url" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-red transition-all" value="${sp?.url || ''}" placeholder="https://..." />
       </div>
@@ -1054,6 +1070,7 @@ function renderSponsorModalContent(sp?: any) {
     setSavingState(true)
 
     const name = (document.getElementById('sp-name') as HTMLInputElement).value
+    const category = (document.getElementById('sp-category') as HTMLSelectElement).value
     const url = (document.getElementById('sp-url') as HTMLInputElement).value
     let logo = (document.getElementById('sp-logo') as HTMLInputElement).value
 
@@ -1085,6 +1102,7 @@ function renderSponsorModalContent(sp?: any) {
         sponsors[index] = {
           ...sponsors[index],
           name,
+          category,
           logo,
           url
         }
@@ -1094,6 +1112,7 @@ function renderSponsorModalContent(sp?: any) {
       const newSp = {
         id: Date.now(),
         name,
+        category,
         logo,
         url
       }
