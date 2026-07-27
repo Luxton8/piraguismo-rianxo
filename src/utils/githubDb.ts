@@ -37,6 +37,48 @@ export async function pushToGitHub(path: string, content: string, commitMessage:
   }
 }
 
+export async function pushBinaryToGitHub(path: string, base64ContentWithHeader: string, message: string): Promise<string | null> {
+  const base64Content = base64ContentWithHeader.split(',')[1];
+  const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+
+  try {
+    let sha = '';
+    const getRes = await fetch(url, {
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    if (getRes.ok) {
+      const data = await getRes.json();
+      sha = data.sha;
+    }
+
+    const putRes = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message,
+        content: base64Content,
+        sha: sha || undefined
+      })
+    });
+
+    if (putRes.ok) {
+      // Return absolute path relative to repo or CDN URL
+      return `/images/sponsors/${path.split('/').pop()}`;
+    }
+    return null;
+  } catch (err) {
+    console.error("Error pushing binary to GitHub:", err);
+    return null;
+  }
+}
+
 async function fetchArrayFromGitHub(path: string): Promise<{ data: any[], sha?: string }> {
   const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
   try {

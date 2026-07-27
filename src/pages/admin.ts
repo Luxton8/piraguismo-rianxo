@@ -30,6 +30,9 @@ type Message = {
   message: string;
   date: string;
   read: boolean;
+  companyName?: string;
+  companyUrl?: string;
+  companyLogo?: string;
 }
 
 type EventItem = {
@@ -482,7 +485,24 @@ function renderMessagesTab(messages: Message[]): string {
               </button>
             </div>
           </div>
-          <p class="text-gray-650 text-sm whitespace-pre-wrap leading-relaxed border-t border-gray-250 pt-4 mt-2">${msg.message}</p>
+          <p class="text-gray-655 text-sm whitespace-pre-wrap leading-relaxed border-t border-gray-250 pt-4 mt-2">${msg.message}</p>
+          
+          ${msg.companyName ? `
+            <div class="mt-4 p-4 bg-white border border-gray-200 rounded-xl flex items-center justify-between gap-4 flex-wrap">
+              <div class="flex items-center gap-3">
+                <div class="w-14 h-10 bg-gray-50 rounded-lg overflow-hidden flex items-center justify-center shrink-0 border border-gray-200 p-1">
+                  ${msg.companyLogo ? `<img src="${msg.companyLogo}" class="h-full object-contain" />` : '<span class="text-[8px] text-gray-400 font-bold uppercase">Sen logo</span>'}
+                </div>
+                <div>
+                  <p class="text-xs font-bold text-gray-900">Solicitude de Patrocinio: ${msg.companyName}</p>
+                  ${msg.companyUrl ? `<a href="${msg.companyUrl}" target="_blank" class="text-[10px] text-brand-red hover:underline font-bold">${msg.companyUrl}</a>` : '<span class="text-[10px] text-gray-400 font-semibold">Sen web</span>'}
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="window.approveSponsor(${msg.id})" class="px-3 py-1.5 bg-brand-red text-white text-[10px] font-bold uppercase tracking-wider rounded-lg hover:bg-red-700 transition-colors cursor-pointer shadow-sm">Aprobar como Patrocinador</button>
+              </div>
+            </div>
+          ` : ''}
         </div>
       `).join('')}
     </div>
@@ -1182,6 +1202,36 @@ async function deleteMessage(id: number) {
     await pushToGitHub('public/data/messages.json', JSON.stringify(filtered, null, 2), `Delete message: ${id}`)
     renderDashboardView()
     showToast('Mensaxe eliminada')
+  }
+}
+
+// Approve Sponsor
+async function approveSponsor(messageId: number) {
+  const messages: any[] = JSON.parse(localStorage.getItem('admin_messages') || '[]')
+  const msg = messages.find(m => m.id === messageId)
+  if (!msg || !msg.companyName) return
+
+  if (confirm(`¿Queres aprobar a "${msg.companyName}" como patrocinador secundario da web?`)) {
+    // 1. Add to sponsors
+    const sponsors: any[] = JSON.parse(localStorage.getItem('admin_sponsors') || '[]')
+    const newSp = {
+      id: Date.now(),
+      name: msg.companyName,
+      category: 'Secundario',
+      logo: msg.companyLogo || '',
+      url: msg.companyUrl || ''
+    }
+    sponsors.push(newSp)
+    localStorage.setItem('admin_sponsors', JSON.stringify(sponsors))
+    await pushToGitHub('public/data/sponsors.json', JSON.stringify(sponsors, null, 2), `Approve sponsor: ${msg.companyName}`)
+
+    // 2. Mark message as read
+    msg.read = true
+    localStorage.setItem('admin_messages', JSON.stringify(messages))
+    await pushToGitHub('public/data/messages.json', JSON.stringify(messages, null, 2), `Mark message ${messageId} as read (approved sponsor)`)
+
+    showToast(`Empresa "${msg.companyName}" aprobada e engadida con éxito!`)
+    renderDashboardView()
   }
 }
 
@@ -2015,6 +2065,7 @@ declare global {
     downloadBackupJSON: typeof downloadBackupJSON;
     restoreBackupJSON: (e: Event) => void;
     filterEvents: typeof filterEvents;
+    approveSponsor: typeof approveSponsor;
   }
 }
 
@@ -2050,6 +2101,7 @@ window.exportOrdersToCSV = exportOrdersToCSV
 window.downloadBackupJSON = downloadBackupJSON
 window.restoreBackupJSON = restoreBackupJSON
 window.filterEvents = filterEvents
+window.approveSponsor = approveSponsor
 
 // Initialize and setup
 async function initAdmin() {

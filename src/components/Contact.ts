@@ -1,4 +1,4 @@
-import { saveMessageToDb } from '../utils/githubDb'
+import { saveMessageToDb, pushBinaryToGitHub } from '../utils/githubDb'
 
 export function renderContact() {
   const section = document.createElement('section')
@@ -35,10 +35,36 @@ export function renderContact() {
                     <option>Información xeral</option>
                     <option>Inscricións</option>
                     <option>Eventos</option>
+                    <option>Patrocinio e Colaboración</option>
                     <option>Outros</option>
                   </select>
                   <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Conditional Company Fields -->
+              <div id="company-fields" class="hidden space-y-4 border border-brand-red/15 bg-brand-red/[0.01] p-5 rounded-2xl transition-all duration-300">
+                <p class="text-[10px] font-bold text-brand-red uppercase tracking-widest">Datos da Empresa</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Nome da Empresa</label>
+                    <input type="text" id="contact-company-name" class="w-full bg-white border border-gray-250 rounded-xl px-4 py-3 text-xs text-gray-850 focus:outline-none focus:border-brand-red transition-all" placeholder="Nome comercial" />
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Web da Empresa (URL)</label>
+                    <input type="url" id="contact-company-url" class="w-full bg-white border border-gray-250 rounded-xl px-4 py-3 text-xs text-gray-850 focus:outline-none focus:border-brand-red transition-all" placeholder="https://..." />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Logo da Empresa (Opcional)</label>
+                  <div class="flex items-center gap-3">
+                    <label class="px-4 py-2 bg-white border border-gray-250 hover:border-brand-red hover:text-brand-red rounded-xl text-[10px] font-bold transition-all cursor-pointer shadow-sm">
+                      Seleccionar Logo
+                      <input type="file" id="contact-company-logo-file" accept="image/*" class="hidden" />
+                    </label>
+                    <span id="contact-company-logo-name" class="text-[10px] text-gray-400 font-semibold truncate max-w-xs">Ningunha imaxe seleccionada</span>
                   </div>
                 </div>
               </div>
@@ -130,12 +156,42 @@ export function renderContact() {
 
   setTimeout(() => {
     const form = section.querySelector<HTMLFormElement>('#contact-form')
+    const subjectEl = document.getElementById('contact-subject') as HTMLSelectElement
+    const companyFields = document.getElementById('company-fields')!
+    const logoInput = document.getElementById('contact-company-logo-file') as HTMLInputElement
+    const logoName = document.getElementById('contact-company-logo-name')!
+
+    if (subjectEl) {
+      subjectEl.addEventListener('change', () => {
+        if (subjectEl.value === 'Patrocinio e Colaboración') {
+          companyFields.classList.remove('hidden')
+        } else {
+          companyFields.classList.add('hidden')
+        }
+      })
+    }
+
+    if (logoInput) {
+      logoInput.addEventListener('change', () => {
+        if (logoInput.files && logoInput.files[0]) {
+          logoName.textContent = logoInput.files[0].name
+        } else {
+          logoName.textContent = 'Ningunha imaxe seleccionada'
+        }
+      })
+    }
+
     if (form) {
-      form.addEventListener('submit', (e) => {
+      form.addEventListener('submit', async (e) => {
         e.preventDefault()
+        const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement
+        if (submitBtn) {
+          submitBtn.disabled = true
+          submitBtn.innerHTML = 'Enviando...'
+        }
+
         const nameEl = document.getElementById('contact-name') as HTMLInputElement
         const emailEl = document.getElementById('contact-email') as HTMLInputElement
-        const subjectEl = document.getElementById('contact-subject') as HTMLSelectElement
         const messageEl = document.getElementById('contact-message') as HTMLTextAreaElement
         const privacyCheck = document.getElementById('contact-privacy-check') as HTMLInputElement
         const commercialCheck = document.getElementById('contact-commercial-check') as HTMLInputElement
@@ -152,12 +208,49 @@ export function renderContact() {
         // Math challenge validation
         if (parseInt(mathEl.value, 10) !== 7) {
           alert('A resposta á pregunta de seguridade é incorrecta.')
+          if (submitBtn) {
+            submitBtn.disabled = false
+            submitBtn.innerHTML = 'Enviar mensaxe'
+          }
           return
         }
 
         if (!privacyCheck.checked) {
           alert('Debes aceptar a Política de Privacidade para enviar o formulario.')
+          if (submitBtn) {
+            submitBtn.disabled = false
+            submitBtn.innerHTML = 'Enviar mensaxe'
+          }
           return
+        }
+
+        let companyName = ''
+        let companyUrl = ''
+        let companyLogo = ''
+
+        if (subjectEl.value === 'Patrocinio e Colaboración') {
+          companyName = (document.getElementById('contact-company-name') as HTMLInputElement).value
+          companyUrl = (document.getElementById('contact-company-url') as HTMLInputElement).value
+
+          if (logoInput.files && logoInput.files[0]) {
+            const file = logoInput.files[0]
+            const reader = new FileReader()
+            const uploadPromise = new Promise<string | null>((resolveReader) => {
+              reader.onload = async () => {
+                const base64 = reader.result as string
+                const filename = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`
+                const ghPath = `public/images/sponsors/${filename}`
+                const uploadedUrl = await pushBinaryToGitHub(ghPath, base64, `Upload sponsor logo: ${file.name}`)
+                resolveReader(uploadedUrl)
+              }
+              reader.onerror = () => resolveReader(null)
+            })
+            reader.readAsDataURL(file)
+            const resUrl = await uploadPromise
+            if (resUrl) {
+              companyLogo = resUrl
+            }
+          }
         }
 
         const newMsg = {
@@ -166,6 +259,9 @@ export function renderContact() {
           email: emailEl.value,
           subject: subjectEl.value,
           message: messageEl.value,
+          companyName: companyName || undefined,
+          companyUrl: companyUrl || undefined,
+          companyLogo: companyLogo || undefined,
           privacyAccepted: true,
           privacyPolicyVersion: '1.0',
           commercialAccepted: commercialCheck.checked,
@@ -179,10 +275,17 @@ export function renderContact() {
           read: false
         }
 
-        saveMessageToDb(newMsg)
+        await saveMessageToDb(newMsg)
 
         // Reset form
         form.reset()
+        companyFields.classList.add('hidden')
+        logoName.textContent = 'Ningunha imaxe seleccionada'
+
+        if (submitBtn) {
+          submitBtn.disabled = false
+          submitBtn.innerHTML = 'Enviar mensaxe'
+        }
 
         // Show Toast/Notification
         const toast = document.createElement('div')
