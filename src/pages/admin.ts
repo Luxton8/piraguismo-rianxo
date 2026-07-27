@@ -581,52 +581,169 @@ function renderTendaTab(products: Product[]): string {
 // TAB 4: Calendar / Calendario
 // ----------------------------------------------------
 function renderCalendarioTab(events: EventItem[]): string {
+  const confirmedCount = events.filter(e => e.status === 'Confirmado').length
+  const pendingCount = events.filter(e => e.status === 'Pendente').length
+
   return `
-    <div class="space-y-6 animate-fade-in-up text-gray-800">
-      <div class="flex justify-between items-center">
-        <h3 class="font-display font-bold text-lg text-gray-900">Eventos no Calendario</h3>
-        <button onclick="window.openCreateEventModal()" class="px-5 py-2.5 bg-brand-red text-white text-xs font-bold uppercase tracking-widest rounded-full hover:bg-red-700 transition-all flex items-center gap-2 cursor-pointer shadow-sm">
+    <div class="space-y-6 animate-fade-in-up text-gray-800 font-sans">
+      <!-- Calendar Header & Summary stats -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-100 pb-5">
+        <div>
+          <h3 class="font-display font-black text-xl uppercase tracking-tight text-gray-900">Eventos no Calendario</h3>
+          <div class="flex items-center gap-3 text-xs text-gray-500 font-semibold mt-1">
+            <span>Total: <strong class="text-gray-900">${events.length}</strong></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+            <span class="text-green-600">Confirmados: <strong>${confirmedCount}</strong></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+            <span class="text-amber-600">Pendentes: <strong>${pendingCount}</strong></span>
+          </div>
+        </div>
+        <button onclick="window.openCreateEventModal()" class="px-5 py-2.5 bg-brand-red text-white text-xs font-bold uppercase tracking-widest rounded-full hover:bg-red-700 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer shadow-md">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
           Engadir Evento
         </button>
       </div>
 
-      <div class="grid grid-cols-1 gap-4">
+      <!-- Search & Filters -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-200/80">
+        <div class="relative sm:col-span-1">
+          <input type="text" id="event-search" oninput="window.filterEvents()" class="w-full bg-white border border-gray-250 rounded-xl pl-9 pr-4 py-2.5 text-xs focus:outline-none focus:border-brand-red transition-all text-gray-800" placeholder="Buscar por título ou lugar..." />
+          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+        <div>
+          <select id="event-filter-status" onchange="window.filterEvents()" class="w-full bg-white border border-gray-250 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-brand-red transition-all text-gray-700 font-semibold cursor-pointer">
+            <option value="all">Tódolos Estados</option>
+            <option value="confirmado">Confirmados</option>
+            <option value="pendente">Pendentes</option>
+          </select>
+        </div>
+        <div>
+          <select id="event-filter-type" onchange="window.filterEvents()" class="w-full bg-white border border-gray-250 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-brand-red transition-all text-gray-700 font-semibold cursor-pointer">
+            <option value="all">Tódolos Tipos</option>
+            <option value="regata">Regatas</option>
+            <option value="concentración">Concentracións</option>
+            <option value="asemblea">Asembleas</option>
+            <option value="outro">Outros</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Event Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="events-grid-container">
         ${events.length === 0 ? `
-          <div class="bg-white border border-gray-200 shadow-sm rounded-2xl py-20 text-center">
+          <div class="bg-white border border-gray-200 shadow-sm rounded-2xl py-20 text-center col-span-full">
             <p class="text-gray-400 text-lg">Non hai eventos programados. Crea o primeiro!</p>
           </div>
         ` : events.map(evt => {
-          const { day, month } = parseAndFormatDate(evt.date);
+          const { day, month, year } = parseAndFormatDate(evt.date);
+          const statusColors = evt.status === 'Confirmado' 
+            ? 'bg-green-50 text-green-700 border-green-200' 
+            : 'bg-amber-50 text-amber-700 border-amber-200';
+          const typeColors = 'bg-gray-100 text-gray-700 border-gray-200';
+          
           return `
-            <div class="bg-white border border-gray-200 shadow-sm p-6 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-gray-300 transition-colors">
-              <div class="flex items-center gap-4 flex-1">
-                <div class="w-16 h-16 bg-brand-red/[0.05] rounded-xl shrink-0 flex flex-col items-center justify-center border border-brand-red/20 text-center">
-                  <span class="text-lg font-bold text-brand-red font-display leading-none">${day}</span>
-                  ${month ? `<span class="text-[9px] font-bold text-gray-550 uppercase tracking-widest mt-1">${month}</span>` : ''}
+            <div class="event-card bg-white border border-gray-200 hover:border-brand-red/30 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden group" 
+                 data-title="${evt.title.toLowerCase()}" 
+                 data-location="${evt.location.toLowerCase()}" 
+                 data-type="${evt.type.toLowerCase()}"
+                 data-status="${evt.status.toLowerCase()}">
+              
+              <!-- Color Indicator Line -->
+              <div class="absolute top-0 left-0 w-full h-1 ${evt.status === 'Confirmado' ? 'bg-green-500' : 'bg-amber-500'}"></div>
+              
+              <div class="flex items-start gap-4 mb-4 mt-1">
+                <!-- Date block -->
+                <div class="w-14 h-16 bg-gray-50 border border-gray-200 rounded-xl shrink-0 flex flex-col items-center justify-center text-center shadow-sm">
+                  <span class="text-xl font-display font-extrabold text-gray-900 leading-none">${day}</span>
+                  ${month ? `<span class="text-[9px] font-bold text-brand-red uppercase tracking-wider mt-1.5">${month}</span>` : ''}
+                  ${year ? `<span class="text-[8px] text-gray-400 mt-0.5">${year}</span>` : ''}
                 </div>
-                <div class="flex-1">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="text-[10px] bg-gray-100 border border-gray-200 px-2 py-0.5 rounded text-gray-650 font-bold uppercase tracking-widest">${evt.type}</span>
-                  <span class="text-[10px] font-bold uppercase tracking-widest ${evt.status === 'Confirmado' ? 'text-green-600' : 'text-orange-600'}">${evt.status}</span>
+                
+                <!-- Info block -->
+                <div class="flex-1 space-y-2">
+                  <div class="flex flex-wrap gap-1.5 items-center">
+                    <span class="px-2 py-0.5 rounded border text-[9px] font-bold uppercase tracking-wider ${typeColors}">${evt.type}</span>
+                    <span class="px-2 py-0.5 rounded border text-[9px] font-bold uppercase tracking-wider ${statusColors}">${evt.status}</span>
+                  </div>
+                  <h4 class="font-display font-bold text-base text-gray-900 leading-snug group-hover:text-brand-red transition-colors line-clamp-2">${evt.title}</h4>
                 </div>
-                <h4 class="font-display font-bold text-lg text-gray-900 mt-1">${evt.title}</h4>
-                <p class="text-xs text-gray-500 flex items-center gap-1 mt-1">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                  ${evt.location}
-                </p>
               </div>
-            </div>
-            
-            <div class="flex items-center gap-3 shrink-0">
-              <button onclick="window.openEditEventModal(${evt.id})" class="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-sm">Editar</button>
-              <button onclick="window.deleteEvent(${evt.id})" class="px-4 py-2 bg-brand-red/10 border border-brand-red/20 text-brand-red hover:bg-brand-red hover:text-white rounded-lg text-xs font-bold transition-colors cursor-pointer">Eliminar</button>
+              
+              <!-- Location and Actions -->
+              <div class="border-t border-gray-100 pt-4 mt-auto flex flex-col gap-3">
+                <p class="text-xs text-gray-500 flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  <span class="truncate">${evt.location}</span>
+                </p>
+                
+                <div class="flex items-center gap-2 justify-end pt-1">
+                  <button onclick="window.openEditEventModal(${evt.id})" class="px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-sm">
+                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    Editar
+                  </button>
+                  <button onclick="window.deleteEvent(${evt.id})" class="px-3.5 py-1.5 bg-brand-red/10 border border-brand-red/20 text-brand-red hover:bg-brand-red hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Eliminar
+                  </button>
+                </div>
+              </div>
             </div>
           `;
         }).join('')}
+        
+        <!-- Empty Results Message -->
+        <div id="event-empty-msg" class="hidden bg-white border border-gray-200 shadow-sm rounded-2xl py-20 text-center col-span-full">
+          <p class="text-gray-400 text-base font-semibold">Non se atoparon eventos cos filtros seleccionados.</p>
+        </div>
       </div>
     </div>
   `
+}
+
+function filterEvents() {
+  const searchInput = document.getElementById('event-search') as HTMLInputElement
+  const statusSelect = document.getElementById('event-filter-status') as HTMLSelectElement
+  const typeSelect = document.getElementById('event-filter-type') as HTMLSelectElement
+  
+  if (!searchInput || !statusSelect || !typeSelect) return
+  
+  const query = searchInput.value.trim().toLowerCase()
+  const status = statusSelect.value.toLowerCase()
+  const type = typeSelect.value.toLowerCase()
+  
+  const cards = document.querySelectorAll('.event-card')
+  let visibleCount = 0
+  
+  cards.forEach(card => {
+    const el = card as HTMLElement
+    const title = el.getAttribute('data-title') || ''
+    const location = el.getAttribute('data-location') || ''
+    const cStatus = el.getAttribute('data-status') || ''
+    const cType = el.getAttribute('data-type') || ''
+    
+    const matchesSearch = title.includes(query) || location.includes(query)
+    const matchesStatus = status === 'all' || cStatus === status
+    const matchesType = type === 'all' || cType.includes(type)
+    
+    if (matchesSearch && matchesStatus && matchesType) {
+      el.classList.remove('hidden')
+      visibleCount++
+    } else {
+      el.classList.add('hidden')
+    }
+  })
+  
+  const emptyEl = document.getElementById('event-empty-msg')
+  if (emptyEl) {
+    if (visibleCount === 0) {
+      emptyEl.classList.remove('hidden')
+    } else {
+      emptyEl.classList.add('hidden')
+    }
+  }
 }
 
 // ----------------------------------------------------
@@ -1865,6 +1982,7 @@ declare global {
     exportOrdersToCSV: typeof exportOrdersToCSV;
     downloadBackupJSON: typeof downloadBackupJSON;
     restoreBackupJSON: (e: Event) => void;
+    filterEvents: typeof filterEvents;
   }
 }
 
@@ -1899,6 +2017,7 @@ window.exportMessagesToCSV = exportMessagesToCSV
 window.exportOrdersToCSV = exportOrdersToCSV
 window.downloadBackupJSON = downloadBackupJSON
 window.restoreBackupJSON = restoreBackupJSON
+window.filterEvents = filterEvents
 
 // Initialize and setup
 renderPage()
