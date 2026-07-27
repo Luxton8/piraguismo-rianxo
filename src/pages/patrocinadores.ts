@@ -50,13 +50,19 @@ const main = document.createElement('main')
 main.className = 'pt-32 pb-24 container mx-auto px-6 max-w-7xl font-sans text-gray-850'
 
 async function init() {
-  try {
-    const res = await fetch('/data/sponsors.json')
-    if (res.ok) {
-      dynamicSponsors = await res.json()
+  const localSponsors = localStorage.getItem('admin_sponsors')
+  if (localSponsors) {
+    dynamicSponsors = JSON.parse(localSponsors)
+  } else {
+    try {
+      const res = await fetch('/data/sponsors.json')
+      if (res.ok) {
+        dynamicSponsors = await res.json()
+        localStorage.setItem('admin_sponsors', JSON.stringify(dynamicSponsors))
+      }
+    } catch (e) {
+      console.error('Error fetching dynamic sponsors:', e)
     }
-  } catch (e) {
-    console.error('Error fetching dynamic sponsors:', e)
   }
 
   app.appendChild(renderNavigation())

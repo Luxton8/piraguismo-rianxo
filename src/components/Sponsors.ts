@@ -63,47 +63,56 @@ export function renderSponsors() {
 
   // Load other sponsors dynamically
   setTimeout(async () => {
-    try {
-      const res = await fetch('/data/sponsors.json')
-      if (res.ok) {
-        const dynamicSponsors = await res.json()
-        if (Array.isArray(dynamicSponsors)) {
-          const dynamicPrincipals = dynamicSponsors.filter(sp => sp.category === 'Principal')
-          const dynamicSecondaries = dynamicSponsors.filter(sp => sp.category === 'Secundario')
-
-          // Add dynamic principals to the main grid
-          const mainGrid = document.getElementById('main-sponsors-grid')
-          if (mainGrid && dynamicPrincipals.length > 0) {
-            mainGrid.innerHTML += dynamicPrincipals.map(sp => `
-              <a href="${sp.url || '#'}" ${sp.url ? 'target="_blank" rel="noopener noreferrer"' : 'onclick="return false;"'} class="h-16 lg:h-24 flex items-center justify-center group cursor-pointer p-4 border border-gray-100 hover:border-gray-200 hover:shadow-md rounded-2xl bg-gray-50/50 transition-all duration-300">
-                ${sp.logo ? `
-                  <img src="${sp.logo}" alt="${sp.name}" loading="lazy" decoding="async" class="h-full object-contain opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500" />
-                ` : `
-                  <span class="text-xs font-display font-bold text-gray-400 group-hover:text-brand-red transition-all duration-500 uppercase tracking-wider">${sp.name}</span>
-                `}
-              </a>
-            `).join('')
-          }
-
-          // Add dynamic secondaries to the secondary grid
-          const secondaryContainer = document.getElementById('other-sponsors-container')
-          const secondaryGrid = document.getElementById('other-sponsors-grid')
-          if (secondaryContainer && secondaryGrid && dynamicSecondaries.length > 0) {
-            secondaryGrid.innerHTML = dynamicSecondaries.map(sp => `
-              <a href="${sp.url || '#'}" ${sp.url ? 'target="_blank" rel="noopener noreferrer"' : 'onclick="return false;"'} class="h-14 lg:h-20 flex items-center justify-center group cursor-pointer p-3 border border-gray-100 hover:border-gray-250 rounded-xl bg-white hover:shadow-md transition-all duration-300">
-                ${sp.logo ? `
-                  <img src="${sp.logo}" alt="${sp.name}" loading="lazy" decoding="async" class="h-full object-contain opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500" />
-                ` : `
-                  <span class="text-[10px] font-display font-bold text-gray-400 group-hover:text-brand-red transition-all duration-500 uppercase tracking-wider text-center leading-tight">${sp.name}</span>
-                `}
-              </a>
-            `).join('')
-            secondaryContainer.classList.remove('hidden')
-          }
+    let dynamicSponsors: any[] = []
+    const localSponsors = localStorage.getItem('admin_sponsors')
+    
+    if (localSponsors) {
+      dynamicSponsors = JSON.parse(localSponsors)
+    } else {
+      try {
+        const res = await fetch('/data/sponsors.json')
+        if (res.ok) {
+          dynamicSponsors = await res.json()
+          localStorage.setItem('admin_sponsors', JSON.stringify(dynamicSponsors))
         }
+      } catch (e) {
+        console.error('Error loading other sponsors:', e)
       }
-    } catch (e) {
-      console.error('Error loading other sponsors:', e)
+    }
+
+    if (Array.isArray(dynamicSponsors)) {
+      const dynamicPrincipals = dynamicSponsors.filter(sp => sp.category === 'Principal')
+      const dynamicSecondaries = dynamicSponsors.filter(sp => sp.category === 'Secundario')
+
+      // Add dynamic principals to the main grid
+      const mainGrid = document.getElementById('main-sponsors-grid')
+      if (mainGrid && dynamicPrincipals.length > 0) {
+        mainGrid.innerHTML += dynamicPrincipals.map(sp => `
+          <a href="${sp.url || '#'}" ${sp.url ? 'target="_blank" rel="noopener noreferrer"' : 'onclick="return false;"'} class="h-16 lg:h-24 flex items-center justify-center group cursor-pointer p-4 border border-gray-100 hover:border-gray-200 hover:shadow-md rounded-2xl bg-gray-50/50 transition-all duration-300">
+            ${sp.logo ? `
+              <img src="${sp.logo}" alt="${sp.name}" loading="lazy" decoding="async" class="h-full object-contain opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500" />
+            ` : `
+              <span class="text-xs font-display font-bold text-gray-400 group-hover:text-brand-red transition-all duration-500 uppercase tracking-wider">${sp.name}</span>
+            `}
+          </a>
+        `).join('')
+      }
+
+      // Add dynamic secondaries to the secondary grid
+      const secondaryContainer = document.getElementById('other-sponsors-container')
+      const secondaryGrid = document.getElementById('other-sponsors-grid')
+      if (secondaryContainer && secondaryGrid && dynamicSecondaries.length > 0) {
+        secondaryGrid.innerHTML = dynamicSecondaries.map(sp => `
+          <a href="${sp.url || '#'}" ${sp.url ? 'target="_blank" rel="noopener noreferrer"' : 'onclick="return false;"'} class="h-14 lg:h-20 flex items-center justify-center group cursor-pointer p-3 border border-gray-100 hover:border-gray-250 rounded-xl bg-white hover:shadow-md transition-all duration-300">
+            ${sp.logo ? `
+              <img src="${sp.logo}" alt="${sp.name}" loading="lazy" decoding="async" class="h-full object-contain opacity-60 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-500" />
+            ` : `
+              <span class="text-[10px] font-display font-bold text-gray-400 group-hover:text-brand-red transition-all duration-500 uppercase tracking-wider text-center leading-tight">${sp.name}</span>
+            `}
+          </a>
+        `).join('')
+        secondaryContainer.classList.remove('hidden')
+      }
     }
   }, 0)
 
