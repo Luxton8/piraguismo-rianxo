@@ -1,5 +1,4 @@
 import '../style.css'
-import { renderFooter } from '../components/Footer'
 
 // State models
 type Nova = {
@@ -155,7 +154,6 @@ function renderPage() {
   }
   
   app.appendChild(main)
-  app.appendChild(renderFooter())
 }
 
 function renderLoginView() {
