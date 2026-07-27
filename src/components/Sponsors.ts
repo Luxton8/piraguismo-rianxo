@@ -10,7 +10,7 @@ export function renderSponsors() {
     },
     { 
       name: 'Deputación da Coruña', 
-      logo: '/logo-deputacion-neg.png',
+      logo: '/DepCor_horiz_BN.png',
       url: 'https://www.dacoruna.gal'
     },
     { 
