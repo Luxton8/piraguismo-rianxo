@@ -1,6 +1,7 @@
 import '../style.css'
 import { renderNavigation } from '../components/Navigation'
 import { renderFooter } from '../components/Footer'
+import { saveOrderToDb } from '../utils/githubDb'
 
 // --- State & Data ---
 type Product = { 
@@ -558,9 +559,7 @@ function renderCheckoutModal() {
       }
 
       // Save order
-      const orders = JSON.parse(localStorage.getItem('admin_orders') || '[]')
-      orders.unshift(newOrder)
-      localStorage.setItem('admin_orders', JSON.stringify(orders))
+      saveOrderToDb(newOrder)
 
       // Trigger standard email mailto
       const email = "pedidos@clubpiraguismorianxo.com"

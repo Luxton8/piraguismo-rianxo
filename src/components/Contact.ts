@@ -1,3 +1,5 @@
+import { saveMessageToDb } from '../utils/githubDb'
+
 export function renderContact() {
   const section = document.createElement('section')
   section.id = 'contacto'
@@ -177,10 +179,7 @@ export function renderContact() {
           read: false
         }
 
-        // Get existing messages
-        const msgs = JSON.parse(localStorage.getItem('admin_messages') || '[]')
-        msgs.unshift(newMsg)
-        localStorage.setItem('admin_messages', JSON.stringify(msgs))
+        saveMessageToDb(newMsg)
 
         // Reset form
         form.reset()

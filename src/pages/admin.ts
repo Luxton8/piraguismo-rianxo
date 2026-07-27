@@ -807,11 +807,12 @@ function renderPartnersTab(): string {
   `
 }
 
-function deletePartner(id: number) {
+async function deletePartner(id: number) {
   if (!confirm('¿Seguro que queres eliminar esta solicitude de socio?')) return
   const partners = JSON.parse(localStorage.getItem('admin_partners') || '[]')
   const filtered = partners.filter((p: any) => p.id !== id)
   localStorage.setItem('admin_partners', JSON.stringify(filtered))
+  await pushToGitHub('public/data/partners.json', JSON.stringify(filtered, null, 2), `Delete partner: ${id}`)
   showToast('Solicitude de socio eliminada con éxito')
   renderDashboardView()
 }
@@ -873,11 +874,12 @@ function renderSchoolTab(): string {
   `
 }
 
-function deleteEnrollment(id: number) {
+async function deleteEnrollment(id: number) {
   if (!confirm('¿Seguro que queres eliminar esta inscrición da escola?')) return
   const enrollments = JSON.parse(localStorage.getItem('admin_escola') || '[]')
   const filtered = enrollments.filter((e: any) => e.id !== id)
   localStorage.setItem('admin_escola', JSON.stringify(filtered))
+  await pushToGitHub('public/data/escola.json', JSON.stringify(filtered, null, 2), `Delete school enrollment: ${id}`)
   showToast('Inscrición da escola eliminada con éxito')
   renderDashboardView()
 }
@@ -1160,45 +1162,49 @@ function adminLogout() {
 }
 
 // Toggle Message read state
-function toggleMessageRead(id: number) {
+async function toggleMessageRead(id: number) {
   const messages: Message[] = JSON.parse(localStorage.getItem('admin_messages') || '[]')
   const index = messages.findIndex(m => m.id === id)
   if (index > -1) {
     messages[index].read = !messages[index].read
     localStorage.setItem('admin_messages', JSON.stringify(messages))
+    await pushToGitHub('public/data/messages.json', JSON.stringify(messages, null, 2), `Toggle read status of message: ${id}`)
     renderDashboardView()
   }
 }
 
 // Delete Message
-function deleteMessage(id: number) {
+async function deleteMessage(id: number) {
   if (confirm('¿Seguro que queres eliminar esta mensaxe?')) {
     const messages: Message[] = JSON.parse(localStorage.getItem('admin_messages') || '[]')
     const filtered = messages.filter(m => m.id !== id)
     localStorage.setItem('admin_messages', JSON.stringify(filtered))
+    await pushToGitHub('public/data/messages.json', JSON.stringify(filtered, null, 2), `Delete message: ${id}`)
     renderDashboardView()
     showToast('Mensaxe eliminada')
   }
 }
 
 // Update Order Status
-function updateOrderStatus(id: number, status: string) {
+async function updateOrderStatus(id: number, status: string) {
   const orders: Order[] = JSON.parse(localStorage.getItem('admin_orders') || '[]')
   const index = orders.findIndex(o => o.id === id)
   if (index > -1) {
     orders[index].status = status
     localStorage.setItem('admin_orders', JSON.stringify(orders))
+    await pushToGitHub('public/data/orders.json', JSON.stringify(orders, null, 2), `Update status of order #${id} to ${status}`)
     renderDashboardView()
     showToast(`Estado do pedido actualizado a ${status}`)
   }
 }
 
 // Delete Order
-function deleteOrder(id: number) {
+async function deleteOrder(id: number) {
   if (confirm('¿Seguro que queres eliminar este pedido?')) {
     const orders: Order[] = JSON.parse(localStorage.getItem('admin_orders') || '[]')
     const filtered = orders.filter(o => o.id !== id)
     localStorage.setItem('admin_orders', JSON.stringify(filtered))
+    await pushToGitHub('public/data/orders.json', JSON.stringify(filtered, null, 2), `Delete order #${id}`)
     renderDashboardView()
     showToast('Pedido eliminado')
   }
@@ -2047,14 +2053,23 @@ window.filterEvents = filterEvents
 
 // Initialize and setup
 async function initAdmin() {
-  try {
-    const res = await fetch('/data/sponsors.json')
-    if (res.ok) {
-      const data = await res.json()
-      localStorage.setItem('admin_sponsors', JSON.stringify(data))
+  const collections = [
+    { file: 'sponsors.json', key: 'admin_sponsors' },
+    { file: 'messages.json', key: 'admin_messages' },
+    { file: 'partners.json', key: 'admin_partners' },
+    { file: 'escola.json', key: 'admin_escola' },
+    { file: 'orders.json', key: 'admin_orders' }
+  ]
+  for (const col of collections) {
+    try {
+      const res = await fetch(`/data/${col.file}`)
+      if (res.ok) {
+        const data = await res.json()
+        localStorage.setItem(col.key, JSON.stringify(data))
+      }
+    } catch (err) {
+      console.error(`Could not load ${col.file} from JSON:`, err)
     }
-  } catch (err) {
-    console.error("Could not load sponsors from JSON:", err)
   }
   renderPage()
 }

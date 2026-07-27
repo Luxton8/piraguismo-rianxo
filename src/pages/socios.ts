@@ -1,6 +1,7 @@
 import '../style.css'
 import { renderNavigation } from '../components/Navigation'
 import { renderFooter } from '../components/Footer'
+import { savePartnerToDb } from '../utils/githubDb'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const main = document.createElement('main')
@@ -144,9 +145,7 @@ setTimeout(() => {
       commercialAccepted: commercialCheck.checked
     }
 
-    const partners = JSON.parse(localStorage.getItem('admin_partners') || '[]')
-    partners.unshift(newPartner)
-    localStorage.setItem('admin_partners', JSON.stringify(partners))
+    savePartnerToDb(newPartner)
 
     form.reset()
     alert('Grazas! A túa solicitude de socio foi enviada correctamente e está pendente de aprobación polo club.')

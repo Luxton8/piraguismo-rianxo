@@ -1,6 +1,7 @@
 import '../style.css'
 import { renderNavigation } from '../components/Navigation'
 import { renderFooter } from '../components/Footer'
+import { saveEscolaToDb } from '../utils/githubDb'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const main = document.createElement('main')
@@ -166,9 +167,7 @@ setTimeout(() => {
       date: new Date().toLocaleDateString('gl-ES')
     }
 
-    const enrollments = JSON.parse(localStorage.getItem('admin_escola') || '[]')
-    enrollments.unshift(newEnrollment)
-    localStorage.setItem('admin_escola', JSON.stringify(enrollments))
+    saveEscolaToDb(newEnrollment)
 
     form.reset()
     alert('Grazas! A inscrición do menor foi rexistrada correctamente no sistema da escola do club.')
